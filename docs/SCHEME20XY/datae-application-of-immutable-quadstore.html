@@ -1,11 +1,11 @@
-<h1 id="datae-an-application-of-immutable-quadstore">datae: an application of immutable quadstore</h1>
+<h1 id="datae-an-application-of-versioned-quadstore">datae: an application of versioned quadstore</h1>
 <figure>
 <img src="https://raw.githubusercontent.com/awesome-data-distribution/datae/master/data.jpg" alt="data" /><figcaption>data</figcaption>
 </figure>
 <h2 id="author">Author</h2>
 <p>Amirouche Boubekki</p>
 <h2 id="abstract">Abstract</h2>
-<p>datae is web application that is (mostly) implemented with Scheme programming language. It is supported by an immutable database that is a quadstore versioned in a direct-acyclic-graph. It is possible to do queries at any point in history while still being efficient to do queries and modify the latest version of the data when snapshots are used. The versioned quadstore is implemented using a novel approach dubbed generic tuple store. datae application goal is to demonstrate that immutable databases allow to implement workflows that ease cooperation.</p>
+<p>datae is web application that is (mostly) implemented with Scheme programming language. It is supported by an versioned database that is a quadstore versioned in a direct-acyclic-graph. It is possible to do queries at any point in history while still being efficient to do queries and modify the latest version of the data when snapshots are used. The versioned quadstore is implemented using a novel approach dubbed generic tuple store. datae application goal is to demonstrate that versioned databases allow to implement workflows that ease cooperation.</p>
 <h2 id="keywords">Keywords</h2>
 <ul>
 <li>data management system</li>
@@ -46,7 +46,7 @@
 <p>Chez Scheme is (prolly) the fatest Scheme implementation [4] and in particular it is faster than Racket [5]. Which makes Chez probably the fastest dynamic language in the known Universe. Scheme community has good scientifical culture. It has been the inspiration that allowed datae to take the current form.</p>
 <p>[4] https://ecraven.github.io/r7rs-benchmarks/ [5] https://benchmarksgame-team.pages.debian.net/benchmarksgame/faster/racket-python3.html</p>
 <h2 id="implementation">Implementation</h2>
-<p>In the spirit of Scheme programming language, datae try to solve the problem using a minimalist core of powerful primitives upon which one can build abstractions to solve bigger problems. The generic tuple store is such an abstraction. It allows to take advantage of WiredTiger without scarifying expressiveness. Generic Tuple Store is a set of procedures that generalize triple and quad store respectively 3-tuples and 4-tuples to n-tuples. In turn, it allows to share code to implement the immutable database to represent its components:</p>
+<p>In the spirit of Scheme programming language, datae try to solve the problem using a minimalist core of powerful primitives upon which one can build abstractions to solve bigger problems. The generic tuple store is such an abstraction. It allows to take advantage of WiredTiger without scarifying expressiveness. Generic Tuple Store is a set of procedures that generalize triple and quad store respectively 3-tuples and 4-tuples to n-tuples. In turn, it allows to share code to implement the versioned database to represent its components:</p>
 <ul>
 <li>The repository metadata as a 3-tuple store,</li>
 <li>the versioned quads as a 6-tuple store,</li>
@@ -135,7 +135,7 @@
 <h3 id="git">Git</h3>
 <h3 id="versioned-hackernews">Versioned HackerNews</h3>
 <h2 id="annexe">Annexe</h2>
-<h3 id="immutable-quadstore-reference">immutable quadstore reference</h3>
+<h3 id="versioned-quadstore-reference">versioned quadstore reference</h3>
 <h4 id="make-.-config"><code>(make . config)</code></h4>
 <h4 id="close-.-database"><code>(close . database)</code></h4>
 <h4 id="metadata-database"><code>(metadata database)</code></h4>

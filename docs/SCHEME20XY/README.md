@@ -1,4 +1,4 @@
-# datae: an application of immutable quadstore
+# datae: an application of versioned quadstore
 
 ![data](https://raw.githubusercontent.com/awesome-data-distribution/datae/master/data.jpg)
 
@@ -9,13 +9,13 @@ Amirouche Boubekki
 ## Abstract
 
 datae is web application that is (mostly) implemented with Scheme
-programming language. It is supported by an immutable database that is
+programming language. It is supported by an versioned database that is
 a quadstore versioned in a direct-acyclic-graph. It is possible to do
 queries at any point in history while still being efficient to do
 queries and modify the latest version of the data when snapshots are
 used. The versioned quadstore is implemented using a novel approach
 dubbed generic tuple store. datae application goal is to demonstrate
-that immutable databases allow to implement workflows that ease
+that versioned databases allow to implement workflows that ease
 cooperation.
 
 ## Keywords
@@ -148,7 +148,7 @@ store is such an abstraction. It allows to take advantage of
 WiredTiger without scarifying expressiveness. Generic Tuple Store is a
 set of procedures that generalize triple and quad store respectively
 3-tuples and 4-tuples to n-tuples. In turn, it allows to share code to
-implement the immutable database to represent its components:
+implement the versioned database to represent its components:
 
 - The repository metadata as a 3-tuple store,
 - the versioned quads as a 6-tuple store,
@@ -317,7 +317,7 @@ TODO?
 
 ## Annexe
 
-### immutable quadstore reference
+### versioned quadstore reference
 
 #### `(make . config)`
 
