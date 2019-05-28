@@ -1,4 +1,4 @@
-# datae: an application of versioned quadstore
+# datae: an application of versioned quad store
 
 ![data](https://raw.githubusercontent.com/awesome-data-distribution/datae/master/data.jpg)
 
@@ -9,14 +9,14 @@ Amirouche Boubekki
 ## Abstract
 
 datae is web application that is (mostly) implemented with Scheme
-programming language. It is supported by an versioned database that is
-a quadstore versioned in a direct-acyclic-graph. It is possible to do
-queries at any point in history while still being efficient to do
-queries and modify the latest version of the data when snapshots are
-used. The versioned quadstore is implemented using a novel approach
-dubbed generic tuple store. datae application goal is to demonstrate
-that versioned databases allow to implement workflows that ease
-cooperation.
+programming language. It is supported by a database that is a
+quad store versioned in a direct-acyclic-graph. It is possible to do
+time traveling queries at any point in history while still being
+efficient to query and modify the latest version of the data when
+snapshots are used. The versioned quad store is implemented using a
+novel approach dubbed generic n-tuple store. datae application goal is
+to demonstrate that versioned databases allow to implement workflows
+that ease cooperation.
 
 ## Keywords
 
@@ -38,35 +38,39 @@ previous states. There is not need to explain the great importance of
 versioning in software management as tools like mercurial, git and
 fossil have shaped modern computing. Having the power of multiple
 branch versioning open the door to manyfold applications. It allows to
-implement a mechanic similar to gitlab's merge requests in any
-domains. That very mechanic is explicit about the actual human
-workflow in entreprise settings in particular when seniors validate
-changes by less senior persons.
+implement a mechanic similar to github's pull requests and gitlab's
+merge requests in many domains. That very mechanic is explicit about
+the actual human workflow in entreprise settings in particular when
+a senior person validates a change by a less senior person.
 
-The versioned quadstore make the implementation of such mechanics more
+The versioned quad store make the implementation of such mechanics more
 systematic and less error prone as the implementation can be shared
 across various tools and organisations.
+
+datae takes the path of versioning data and apply the pull request
+mechanic to collaborate around the making of a knowledge base, similar
+in spirit to wikidata and inspired from existing data management
+systems like CKAN.
 
 The use of a version control system to store open data is a good thing
 as it draws a clear path for reproducible science. But none, meets all
 the expectations. datae aims to replace the use of git and make
 practical cooperation around the creation, publication, storage,
 re-use and maintenance of knowledge bases that are possibly bigger
-than memory.
+than memory. Resource Description Framework (RDF) offers a good canvas
+for cooperation around open data but there is no solution that is good
+enough according to Canova et al. [1]
 
-Resource Description Framework (RDF) offers a good canvas for
-cooperation around open data but there is no solution that is good
-enough. [1] (TODO: explain what are those features required for cooperation
-and why those features are important.) (TODO: cite an article about the
-importance of git and git hosting solutions in the context of software
-development). datae use a novel approach to query versioned data based
-on a topological graph ordering of changes. datae only stores changes
-between versions. datae does not rely on the Theory of Patches
-introduced by Darcs but re-use some its vocabulary. datae use
-WiredTiger database storage engine, an ordered key-value store, to
-deliver a pragmatic ACID-compliant versioned quadstore.
+[1] [Collaborative Open Data versioning: a pragmatic approach using
+Linked Data](https://core.ac.uk/download/pdf/76527782.pdf)
 
-[1]
+datae use a novel approach to store quads in an ordered key-value
+store. It use WiredTiger database storage engine to deliver a
+pragmatic versatile ACID-compliant versioned quad store. It also rely
+on a new algorithm to query versioned tuples based on a topological
+graph ordering of changes. datae only stores changes between
+versions. datae does not rely on the theory of patches introduced by
+Darcs but re-use some its vocabulary.
 
 The first part will present some background knowledge, the second part
 will describe the implementation, the next part will present
@@ -75,28 +79,100 @@ what remains to be explored.
 
 ## Background
 
+This section will describe a few concept upon which datae is built or
+take inspiration.
+
 ### Resource Description Framework
 
-#### Linked Data
+[RDF](https://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/) is
+World Wide Web Consortium (W3C) set of standards that aims to
+facilitating cooperation around data by specifying several
+tools. Among other things it specified means to exchange, query and
+somewhat how to store data. datae only takes inspiration from this
+standards. It doesn't forcefully implement (for the time being) the
+different RDF specifications (that are by the way in the process of a
+rework). datae takes what is good and leave aside what is not.
 
-#### Tripe and Quad Store
+The following sections dive into several part of the RDF framework and
+explain how they relate to datae.
 
 #### SPARQL
 
+SPARQL is a query language part of RDF that specify the language that
+must be used by RDF databases to store and query data. It also
+provides ways to do federated queries. That is, queries across several
+databases. Like it is explained in the literature SPARQL can be
+difficult at times to implement . Instead of aiming for direct
+interoperability, datae take the stance to primarly deliver its main
+feature that is *cooperation around the making of knowledge bases*.
+The main drawback could be that the learning curve to join the datae
+party could be more steep. But that is not the case, for two reasons:
+a) datae internal query language is similar in principle to SPARQL
+even if it is not exact same syntax b) the primary user interface of
+data is not SPARQL. Instead, the interact with datae, an user will
+rely on an graphical user interface or command line tool to upload and
+download a given version of some data. For some advanced use cases a
+subset of SPARQL will be available.
+
+SPARQL specify various data types based on XML specification.  datae
+doesn't conform to that specification. Instead, datae can store
+anything that has a JSON representation which is superset of RDF base
+data types.
+
+#### Vocabularies, Ontologies and Linked Data
+
+With RDF comes a specification to describe the content of a
+database. For instance, the
+[INSPIRE](https://github.com/inspire-eu-rdf) initiative is an
+interesting project that aims that standarzing across organisation a
+vocabulary to exchange spatial data. There is many competing
+vocabulary.
+
+Settling on particular vocabulary is not necessary and the choice of a
+vocabulary can be made later.
+
 ### Version Control System
 
-#### git, mercurial and fossil
+datae is about versioning data. That is keeping a record of how the
+data looks like in a very precise way and how it evolves over time.
+It also about exchanging data. Not just querying remote databases, but
+getting the actual data locally to be able to fix it, refine it,
+improve it and more generally collaborate.
 
-#### Wikibase and Wikidata
+In general, a VCS is a particular system that draws a canvas for
+collaboration around the making of software products.  VCS are things
+like git, mercurial and fossil. That said, it is not the only
+instances of versioning in the wild. There is also wikis!  And among
+them there is wikibase the software that sports wikidata.
+
+Compared to git, mercurial or fossil, datae aims to achieve a very
+similar user-experience. That is commit-push-pull mechanic and the, so
+called, pull requests. The problem with git, in particular, because it
+is the main competitor, is that it doesn't support well bigger than
+memory data. Otherwise said, it is bad at handling large
+datasets. Unlike git, datae handles bigger than RAM structured data.
+This made possible thanks to WiredTiger which is a real
+database. WiredTiger is a database engine that is widespread in the
+industry. It is used at MongoDB and Amazon.
+
+Compared to wikibase and wikidata, datae aims to be much more easy to
+setup and operate. To achieve something similar to datae, one need
+both to setup wikibase with MySQL to allow edition and store history
+and blazegraph to do querying. datae will simplify collaboration
+around the making of large knowledge bases.
+
+datae is collaboration tool that is a mix a of git and wikibase. Like
+git, it is portable, easy to setup. Like wikibase, it allows to edit
+and query efficently structured data.
 
 ### Ordered Key-Value Store
 
 Key-value stores offers a rather high level primitive to build high
 performance, multi-model and domain specific databases. The common
 denominator of key-value stores is that they are mappings of bytes
-where keys are always in the lexicographic order. Even if they do not
-all expose a cursor interface, they certainly allow movements inside
-the mapping or prefix range queries (also known as slices).
+where keys are always sorted in the lexicographic order. Even if they
+do not all expose a cursor interface, they certainly allow movements
+inside the mapping or range queries (also known as slices).
 
 Nowdays there is numerous libraries offering a similar interface among
 them there is FoundationDB. Similar software include Tokyo Cabinet,
@@ -137,52 +213,52 @@ good scientifical culture. It has been the inspiration that allowed
 datae to take the current form.
 
 [4] https://ecraven.github.io/r7rs-benchmarks/
+
 [5] https://benchmarksgame-team.pages.debian.net/benchmarksgame/faster/racket-python3.html
 
 ## Implementation
 
 In the spirit of Scheme programming language, datae try to solve the
 problem using a minimalist core of powerful primitives upon which one
-can build abstractions to solve bigger problems. The generic tuple
+can build abstractions to solve bigger problems. The generic n-tuple
 store is such an abstraction. It allows to take advantage of
-WiredTiger without scarifying expressiveness. Generic Tuple Store is a
-set of procedures that generalize triple and quad store respectively
+WiredTiger without scarifying expressiveness. Generic n-tuple store is
+a set of procedures that generalize triple and quad store respectively
 3-tuples and 4-tuples to n-tuples. In turn, it allows to share code to
 implement the versioned database to represent its components:
 
-- The repository metadata as a 3-tuple store,
+- The repository metadata as a 4-tuple store,
 - the versioned quads as a 6-tuple store,
-- and the 4-tuple stores that are snapshots of branches
+- and the 4-tuple stores that are snapshots of branches.
 
 That section is split into four parts. The first part is a tentative
-formalisation of the problem of finding a smallest table set that
+formalisation of the problem of finding a smallest set of indices that
 allows to bind any pattern in one hop to implement the generic tuple
 store. The third part will dive into the specifics of the
-implementation of versioned 4-tuples using the generic store and how
-the concept of history significance makes querying versioned tuples in
-a direct-acyclic-graph algorithmically less complex. The fourth and
-last part of this section explain how to model various datastructures
-in terms of quads to take advantage of versioning.
+implementation of versioned 4-tuples using the generic n-tuple store
+and how the concept of history significance makes querying versioned
+tuples in a direct-acyclic-graph algorithmically less complex. The
+fourth and last part of this section explain how to model various
+datastructures in terms of quads to take advantage of versioning.
 
-### Generic Tuple Store
+### Generic n-tuple store
 
 The literature seems to be void from attempts to build tuple stores
 based on Ordered Key-Value store. Even if similar work exsists like
 hexastore they don't try to generalize the concept of triple and quad
 store so that it possible to create a database that can host tuple of
-n items where n is bigger than 3.
+n items.
 
 Given a 4-tuple store:
 
 ```scheme
-(define store (nstore engine '(collection uid key value)))
+(define quadstore (nstore engine prefix '(collection uid key value)))
 ```
 
-We need to bind any pattern in one hop. That is for instance the
-following query:
+We need to bind any pattern in one hop. That is, the following query:
 
 ```
-(select (from 'blog (var 'uid) 'title (var 'title)))
+(nstore-select (nstore-from 'blog (nstore-var 'uid) 'title (nstore-var 'title)))
 ```
 
 Will return:
@@ -213,15 +289,15 @@ permutations (instead of 720) in the case of 6-tuple store.
 The problem was stated on
 [math.stackexchange.com](https://math.stackexchange.com/q/3146568/23663).
 Two answers were provided including an algorithm that allows to
-compute the minimal set of indices that allows to query any pattern in
+compute the minimal set of indices allowing to query any pattern in
 one hop.
 
 **Note:** we only consider the case where the pattern is bound in one
 hop because otherwise it would require two or more database calls
 which are more costly. We trade some space on disk, to avoid to ask
-the database engine another join that could be expensive. Building a
-generic tuple store database without that constraint was not tried but
-it seems like downstream the code for querying is also more complex.
+the database engine another join that is expensive. Building a generic
+n-tuple store database without that constraint was not tried. Also
+downstream the code for querying is more complex.
 
 Here is the algorithm to compute the minimal set of permutations that
 allows to bind any pattern in one hop:
@@ -279,66 +355,44 @@ allows to bind any pattern in one hop:
 ```
 
 
-### Quadstore versioned in a direct-acyclic-graph
+### Quad store versioned in a direct-acyclic-graph
 
 #### History Significance
 
 Merge commits will resolve conflicts in a way that makes it possible
 to define a history significance measure that allows to linearize with
-a topological sort the direct-acyclic-graph of changes. Without that,
-querying versions at any point is not pratical as seen in the
-litterature [x].
-
-[x]
+a topological sort the direct-acyclic-graph of changes.
 
 ### How to model data?
 
 #### Versioned Tabular Data
 
-Frictionless data.
+Frictionless data: https://frictionlessdata.io/data-packages/
 
-#### Git Kernel
-
-OK
+#### Linux kernel's git repository
 
 #### Wikidata
 
-TODO
+#### Versioned hackernews
 
-#### Versioned Hacker New
+http://news.ycombinator.com/
 
-TODO?
+## Benchmarks
 
-## Benchmark
+### Versioned Tabular Data
 
-### Git
+### Wikidata
 
-### Versioned HackerNews
+### Versioned hackernews
 
-## Annexe
+## Annexes
 
-### versioned quadstore reference
+### SRFI-167: Ordered key-value store
 
-#### `(make . config)`
+[https://srfi.schemers.org/srfi-167/](https://srfi.schemers.org/srfi-167/)
 
-#### `(close . database)`
+### SRFI-168: Generic n-tuple store
 
-#### `(metadata database)`
+[https://srfi.schemers.org/srfi-168/](https://srfi.schemers.org/srfi-168/)
 
-#### `(merge! database branch other)`
-
-#### `(reverse! database revision)`
-
-#### `(make-branch! database name revision snapshot?)`
-
-#### `(snapshot! database branch)`
-
-#### `(transactional proc) → procedure`
-
-#### `(branch transaction name)`
-
-#### `(ask? transaction revision collection uid key value)`
-
-#### `(add transaction revision collection uid key value)`
-
-#### `(rm transaction revision collection uid key value)`
+### Functional quad store
