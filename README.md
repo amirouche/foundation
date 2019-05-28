@@ -77,6 +77,8 @@ will describe the implementation, the next part will present
 benchmarks and at last we will conclude with summary of the work and
 what remains to be explored.
 
+The code is hosted at [source hut](https://git.sr.ht/~amz3/chez-scheme-arew).
+
 ## Background
 
 This section will describe a few concept upon which datae is built or
