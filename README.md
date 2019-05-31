@@ -9,14 +9,13 @@ Amirouche Boubekki
 ## Abstract
 
 datae is web application that is (mostly) implemented with Scheme
-programming language. It is supported by a database that is a
-quad store versioned in a direct-acyclic-graph. It is possible to do
-time traveling queries at any point in history while still being
-efficient to query and modify the latest version of the data when
-snapshots are used. The versioned quad store is implemented using a
-novel approach dubbed generic n-tuple store. datae application goal is
-to demonstrate that versioned databases allow to implement workflows
-that ease cooperation.
+programming language. It is supported by a database that is a quad
+store versioned in a direct-acyclic-graph. It is possible to do time
+traveling queries at any point in history while still being efficient
+to query and modify the latest version. The versioned quad store is
+implemented using a novel approach dubbed generic n-tuple store. datae
+application goal is to demonstrate that versioned databases allow to
+implement workflows that ease cooperation.
 
 ## Keywords
 
@@ -397,4 +396,26 @@ http://news.ycombinator.com/
 
 [https://srfi.schemers.org/srfi-168/](https://srfi.schemers.org/srfi-168/)
 
-### Functional quad store
+### Functional store
+
+#### `(make-fstore prefix)`
+
+#### `(read-only ...)`
+
+#### `(read-and-write ...)`
+
+#### `(call-with-transaction fstore factory branch proc)`
+
+#### `(call-with-merge-transaction fstore branch other proc)`
+
+#### `(ask? transaction items)`
+
+#### `(add! transaction items)`
+
+#### `(rm! transaction items)`
+
+#### `(from transaction items [config])`
+
+#### `(where transaction items)`
+
+#### `(select <from> <where> ...)` syntax
