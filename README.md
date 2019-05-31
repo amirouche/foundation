@@ -421,12 +421,12 @@ To create an orphan branch, one can do the following:
 #### `(fstore-branch fstore some name)`
 
 Return the unique identifier of the branch `NAME` in `FSTORE` using
-`SOME`. `SOME` can be an `okvs` object or transaction.
+`SOME`. `SOME` can be an `okvs` object or transaction. Return `#f` if
+there is no existing branch `NAME`.
 
-#### `(fstore-merge fstore some branch other)`
+#### `(fstore-merge fstore transaction branch other)`
 
-Merge in `FSTORE` the branch `OTHER` in `BRANCH` using `SOME`. `SOME`
-can be an `okvs` object or transaction.
+Merge in `FSTORE` the branch `OTHER` in `BRANCH` using `TRANSACTION`.
 
 #### `(fstore-ask? some fstore branch quad)`
 
