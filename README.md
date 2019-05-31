@@ -388,34 +388,63 @@ http://news.ycombinator.com/
 
 ## Annexes
 
-### SRFI-167: Ordered key-value store
+### SRFI-167: Ordered key-value store (okvs)
 
 [https://srfi.schemers.org/srfi-167/](https://srfi.schemers.org/srfi-167/)
 
-### SRFI-168: Generic n-tuple store
+### SRFI-168: Generic n-tuple store (nstore)
 
 [https://srfi.schemers.org/srfi-168/](https://srfi.schemers.org/srfi-168/)
 
-### Functional store
+### Functional store (fstore)
 
-#### `(make-fstore prefix)`
+#### `(make-fstore engine prefix)`
 
-#### `(read-only ...)`
+Return a `fstore` object.
 
-#### `(read-and-write ...)`
+#### `(fstore-bigbang)`
 
-#### `(call-with-transaction fstore factory branch proc)`
+Return the null identifier that is used to create orphan branches.
 
-#### `(call-with-merge-transaction fstore branch other proc)`
+#### `(fstore-branch-create fstore some name parent)`
 
-#### `(ask? transaction items)`
+Create a branch in `FSTORE` named `NAME` that has `PARENT` as parent
+using `SOME`. `SOME` can be an `okvs` object or transaction. Return
+the identifier of the created branch.
 
-#### `(add! transaction items)`
+To create an orphan branch, one can do the following:
 
-#### `(rm! transaction items)`
+```scheme
+(define main (fstore-branch-create fstore okvs "main" (fstore-bigbang)))
+```
 
-#### `(from transaction items [config])`
+#### `(fstore-branch fstore some name)`
 
-#### `(where transaction items)`
+Return the unique identifier of the branch `NAME` in `FSTORE` using
+`SOME`. `SOME` can be an `okvs` object or transaction.
 
-#### `(select <from> <where> ...)` syntax
+#### `(fstore-merge fstore some branch other)`
+
+Merge in `FSTORE` the branch `OTHER` in `BRANCH` using `SOME`. `SOME`
+can be an `okvs` object or transaction.
+
+#### `(fstore-ask? some fstore branch quad)`
+
+Return `#t` if `QUAD` exists in `FSTORE`'s `BRANCH`. Otherwise, it
+return `#f`.
+
+#### `(fstore-add! some fstore branch quad)`
+
+Add `QUAD` to `FSTORE` in `BRANCH` using `SOME`. `SOME` can be an
+`okvs` object or transaction.
+
+#### `(fstore-rm! some fstore branch quad)`
+
+Remove `QUAD` from `FSTORE` in `BRANCH` using `SOME`. `SOME` can be an
+`okvs` object or transaction.
+
+#### `(fstore-from transaction fstore branch pattern [config])`
+
+#### `(fstore-where transaction fstore branch pattern)`
+
+#### `(fstore-select <from> <where> ...)` syntax
