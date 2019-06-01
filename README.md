@@ -402,29 +402,31 @@ http://news.ycombinator.com/
 
 Return a `fstore` object.
 
-#### `(fstore-bigbang)`
+#### `(fstore-branch-create-orphan some fstore name snapshot?)`
 
-Return the null identifier that is used to create orphan branches.
+Create an orphan branch in `FSTORE` named `NAME` using `SOME`. `SOME`
+can be an `okvs` object or transaction. Return the identifier of the
+created branch. If `snapshot?` is `#t` the branch will have a
+snapshot.
 
-#### `(fstore-branch-create fstore some name parent)`
+#### `(fstore-branch-create some fstore name change)`
 
-Create a branch in `FSTORE` named `NAME` that has `PARENT` as parent
-using `SOME`. `SOME` can be an `okvs` object or transaction. Return
-the identifier of the created branch.
+Create a branch in `FSTORE` named `NAME` at `CHANGE` using
+`SOME`. `SOME` can be an `okvs` object or transaction. Return the
+identifier of the created branch.
 
-To create an orphan branch, one can do the following:
-
-```scheme
-(define main (fstore-branch-create fstore okvs "main" (fstore-bigbang)))
-```
-
-#### `(fstore-branch fstore some name)`
+#### `(fstore-branch some fstore name)`
 
 Return the unique identifier of the branch `NAME` in `FSTORE` using
 `SOME`. `SOME` can be an `okvs` object or transaction. Return `#f` if
 there is no existing branch `NAME`.
 
-#### `(fstore-merge fstore transaction branch other)`
+#### `(fstore-branch-change some fstore branch)`
+
+Return unique identifier of the change pointed to by `BRANCH` in
+`FSTORE` using `SOME`.
+
+#### `(fstore-merge transaction fstore branch other)`
 
 Merge in `FSTORE` the branch `OTHER` in `BRANCH` using `TRANSACTION`.
 
