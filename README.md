@@ -409,6 +409,11 @@ can be an `okvs` object or transaction. Return the identifier of the
 created branch. If `snapshot?` is `#t` the branch will have a
 snapshot.
 
+#### `(fstore-branch-change some fstore branch)`
+
+Return unique identifier of the change pointed to by `BRANCH` in
+`FSTORE` using `SOME`.
+
 #### `(fstore-branch-create some fstore name change)`
 
 Create a branch in `FSTORE` named `NAME` at `CHANGE` using
@@ -421,14 +426,11 @@ Return the unique identifier of the branch `NAME` in `FSTORE` using
 `SOME`. `SOME` can be an `okvs` object or transaction. Return `#f` if
 there is no existing branch `NAME`.
 
-#### `(fstore-branch-change some fstore branch)`
-
-Return unique identifier of the change pointed to by `BRANCH` in
-`FSTORE` using `SOME`.
-
 #### `(fstore-merge transaction fstore branch other)`
 
-Merge in `FSTORE` the branch `OTHER` in `BRANCH` using `TRANSACTION`.
+In `FSTORE` merge the branch `OTHER` in `BRANCH` using `TRANSACTION`.
+This is only initiate the merge. Conflict resolution must be done by
+the application.
 
 #### `(fstore-ask? some fstore branch quad)`
 
