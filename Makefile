@@ -1,4 +1,4 @@
-FILENAME=datae-application-of-functional-quad-store
+FILENAME=copernic-awesome-data-store
 
 all: README.md
 	cp README.md $(FILENAME).md
