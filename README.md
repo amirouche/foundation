@@ -70,6 +70,7 @@ store](https://en.wikipedia.org/wiki/Ordered_Key-Value_Store). It use
 [FoundationDB database storage engine](https://www.foundationdb.org/)
 to deliver a pragmatic versatile ACID-compliant versioned quad store
 where people can cooperate around the making of knowledge.  copernic
-only stores changes between versions. copernic does not rely on the
-theory of patches introduced by Darcs but re-use some its vocabulary.
-copernic is the future.
+only stores changes between versions.  It has also a snapshot of the
+latest version.  copernic does not rely on the theory of patches
+introduced by Darcs but re-use some its vocabulary.  copernic is the
+future.
