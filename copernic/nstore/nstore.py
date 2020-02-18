@@ -60,23 +60,20 @@ class NStore(NStoreBase):
         assert len(items) == len(self._items), "invalid item count"
         for subspace, index in enumerate(self._indices):
             permutation = list(items[i] for i in index)
-            key = self._prefix + [subspace] + permutation
-            key = tuple(key)
+            key = (self._prefix, subspace, permutation)
             tr.add(pack(key), b"")
 
     def delete(self, tr, *items):
         assert len(items) == len(self._items), "invalid item count"
         for subspace, index in enumerate(self._indices):
             permutation = list(items[i] for i in index)
-            key = self._prefix + [subspace] + permutation
-            key = tuple(key)
+            key = (self._prefix, subspace, permutation)
             del tr[pack(key)]
 
     def ask(self, tr, *items):
         assert len(items) == len(self._items), "invalid item count"
         subspace = 0
-        key = self._prefix + [subspace] + list(items)
-        key = tuple(key)
+        key = (self._prefix, subspace, items)
         out = tr.get(pack(key))
         out = out is not None
         return out
@@ -94,11 +91,11 @@ class NStore(NStoreBase):
             raise NStoreException("Oops!")
         # `index` variable holds the permutation suitable for the
         # query. `subspace` is the "prefix" of that index.
-        prefix = list(pattern[i] for i in index if not isinstance(pattern[i], Variable))
-        prefix = self._prefix + [subspace] + prefix
-        prefix = tuple(prefix)
-        for key, _ in tr.get_range_startswith(pack(prefix)):
-            items = unpack(key)[len(self._prefix) + 1 :]
+        prefix = tuple(pattern[i] for i in index if not isinstance(pattern[i], Variable))
+        prefix = (self._prefix, subspace, prefix)
+        for key, _ in tr.get_range_startswith(pack(prefix)[:-1]):
+            key = unpack(key)
+            items = key[2]
             # re-order the items
             items = tuple(items[index.index(i)] for i in range(len(self._items)))
             bindings = seed
