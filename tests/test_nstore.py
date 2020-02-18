@@ -1,7 +1,4 @@
 import logging
-import os
-import uuid
-from shutil import rmtree
 from uuid import uuid4
 
 import daiquiri

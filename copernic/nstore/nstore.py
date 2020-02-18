@@ -8,8 +8,7 @@ from itertools import permutations
 from immutables import Map
 
 import fdb
-from fdb.tuple import pack
-from fdb.tuple import unpack
+import fdb.tuple
 from copernic.nstore.indices import compute_indices
 
 
@@ -58,23 +57,29 @@ class NStore(NStoreBase):
 
     def add(self, tr, *items):
         assert len(items) == len(self._items), "invalid item count"
+        if any(isinstance(x, fdb.tuple.Versionstamp) for x in items):
+            pack = fdb.tuple.pack_with_versionstamp
+            set = tr.set_versionstamped_key
+        else:
+            pack = fdb.tuple.pack
+            set = tr.set
         for subspace, index in enumerate(self._indices):
             permutation = list(items[i] for i in index)
             key = (self._prefix, subspace, permutation)
-            tr.add(pack(key), b"")
+            set(pack(key), b"")
 
     def delete(self, tr, *items):
         assert len(items) == len(self._items), "invalid item count"
         for subspace, index in enumerate(self._indices):
             permutation = list(items[i] for i in index)
             key = (self._prefix, subspace, permutation)
-            del tr[pack(key)]
+            del tr[fdb.tuple.pack(key)]
 
     def ask(self, tr, *items):
         assert len(items) == len(self._items), "invalid item count"
         subspace = 0
         key = (self._prefix, subspace, items)
-        out = tr.get(pack(key))
+        out = tr.get(fdb.tuple.pack(key))
         out = out is not None
         return out
 
@@ -93,8 +98,8 @@ class NStore(NStoreBase):
         # query. `subspace` is the "prefix" of that index.
         prefix = tuple(pattern[i] for i in index if not isinstance(pattern[i], Variable))
         prefix = (self._prefix, subspace, prefix)
-        for key, _ in tr.get_range_startswith(pack(prefix)[:-1]):
-            key = unpack(key)
+        for key, _ in tr.get_range_startswith(fdb.tuple.pack(prefix)[:-1]):
+            key = fdb.tuple.unpack(key)
             items = key[2]
             # re-order the items
             items = tuple(items[index.index(i)] for i in range(len(self._items)))
