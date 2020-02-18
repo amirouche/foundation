@@ -1,4 +1,5 @@
-wiredtiger/
+copernic/db.sqlite3
+
 coverage.xml
 *.py[cod]
 *~
