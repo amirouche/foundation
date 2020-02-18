@@ -98,6 +98,7 @@ class NStore(NStoreBase):
             items = key[2]
             # re-order the items
             items = tuple(items[index.index(i)] for i in range(len(self._items)))
+            # seed is immutable
             bindings = seed
             for i, item in enumerate(pattern):
                 if isinstance(item, Variable):
