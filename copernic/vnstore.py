@@ -118,11 +118,15 @@ class VNStore(VNStoreBase):
 
         def bind(pattern, binding):
             for item in pattern:
-                if isinstance(item, var):
+                if isinstance(item, Variable):
                     yield binding[item.name]
                 else:
                     yield item
 
+        # The complexity really depends on the pattern.  A pattern
+        # only made of variables will scan the whole database.  In
+        # practice, the user will seldom do time traveling queries, so
+        # it should rarely hit this code path.
         pattern = list(pattern) + [nstore.var('alive?'), nstore.var('changeid')]
         bindings = self._tuples.FROM(tr, *pattern, seed=seed)
         for binding in bindings:
