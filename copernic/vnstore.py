@@ -25,7 +25,7 @@ class VNStore(VNStoreBase):
         self._items = items = list(items)
         # A change can have two key:
         #
-        # - "comment": that is a small description of the change
+        # - "message": that is a small description of the change
         #
         # - "significance": once the change is applied, it has an
         #    history significance VersionStamp that allows to order
@@ -50,20 +50,20 @@ class VNStore(VNStoreBase):
         # With significance as `None` the change is invisible to
         # VNStore.ask.
         self._changes.add(tr, changeid, 'significance', None)
-        self._changes.add(tr, changeid, 'comment', None)
+        self._changes.add(tr, changeid, 'message', None)
 
         return changeid
 
     def change_continue(self, tr, changeid):
         tr._vnstore_changeid = changeid
 
-    def change_comment(self, tr, changeid, comment):
-        # Remove existing comment if any
-        bindings = self._changes.FROM(tr, changeid, 'comment', nstore.var('comment'))
+    def change_message(self, tr, changeid, message):
+        # Remove existing message if any
+        bindings = self._changes.FROM(tr, changeid, 'message', nstore.var('message'))
         for binding in bindings:
-            self._changes.delete(tr, changeid, 'comment', binding['comment'])
-        # add comment
-        self._changes.add(tr, change, 'comment', comment)
+            self._changes.delete(tr, changeid, 'message', binding['message'])
+        # add message
+        self._changes.add(tr, change, 'message', message)
 
     def change_apply(self, tr, changeid):
         # apply change by settings a verionstamp
