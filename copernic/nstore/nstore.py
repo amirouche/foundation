@@ -9,7 +9,7 @@ from immutables import Map
 
 import fdb
 import fdb.tuple
-from copernic.nstore.indices import compute_indices
+from nstore.indices import compute_indices
 
 
 # hoply! hoply! hoply!

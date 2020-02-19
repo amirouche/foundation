@@ -4,7 +4,7 @@ import fdb
 import fdb.tuple
 
 from immutables import Map
-from copernic import nstore
+import nstore
 
 
 
