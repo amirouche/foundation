@@ -1,3 +1,4 @@
+import json
 from uuid import UUID
 from uuid import uuid4
 
@@ -251,7 +252,7 @@ def change_add(request, changeid):
         license = request.POST['license']
         license = license.strip()
         if not license:
-            return HTTP-HttpResponseBadRequest()
+            return HttpResponseBadRequest()
 
         @fdb.transactional
         def add(tr, uid, key, value, license):
@@ -326,7 +327,68 @@ def change_delete(request, changeid):
 
 
 def change_import(request, changeid):
-    pass
+    changeid = UUID(hex=changeid)
+    change = get_object_or_404(ChangeRequest, changeid=changeid)
+
+    if request.method == 'GET':
+        return render(request, 'change_import.html', dict(changeid=changeid))
+    elif request.method == 'POST':
+        file = request.FILES['file']
+        print(file)
+        @fdb.transactional
+        def save(tr, changeid, file):
+            for line in file:
+                # TODO: need more validationc
+                line = line.strip().decode('utf-8')
+                if not line:
+                    continue
+                quad = json.loads(line)
+
+                if (not isinstance(quad, list)) and len(quad) != 4:
+                    return HttpResponseBadRequest('Wrong format')
+                print(quad)
+                uid, key, value, license = quad
+
+                uid = uid.strip()
+                if not uid:
+                    return HttpResponseBadRequest('uid is required')
+
+                try:
+                    uid = UUID(hex=uid)
+                except ValueError as exc:
+                    return HttpResponseBadRequest('not a uuid: {}'.format(uid))
+
+                key = key.strip().lower()
+                if not key:
+                    return HttpResponseBadRequest('wrong key: {}'.format(key))
+
+                if not value:
+                    return HttpResponseBadRequest()
+                if isinstance(value, str):
+                    try:
+                        value = UUID(hex=value)
+                    except ValueError:
+                        if value.lower() == 'false':
+                            value = False
+                        elif value.lower() == 'true':
+                            value = True
+
+                # value is something interesting
+                assert isinstance(value, (UUID, int, bool, str))
+
+                license = license.strip().upper()
+                if not license:
+                    return HttpResponseBadRequest('wrong license: {}'.format(license))
+
+                vnstore.change_continue(tr, changeid)
+                print(uid, key, value, license)
+                vnstore.add(tr, uid, key, value, license)
+
+            return redirect('/change/{}/'.format(changeid))
+
+        return save(db, changeid, file)
+    else:
+        return HttpResponseBadRequest()
 
 
 def change_apply(request, changeid):
