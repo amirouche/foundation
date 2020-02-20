@@ -13,8 +13,8 @@ database-clear:  ## Remove all data from the database
 
 check: ## Run tests
 	make database-clear
-	PYTHONPATH=$(PWD) pytest -vvv --cov-config .coveragerc --cov-report html --cov-report xml --cov=copernic tests
-	bandit --skip=B101 hoply/ -r
+	PYTHONPATH=$(PWD)/copernic pytest -vvv --cov-config .coveragerc --cov-report html --cov-report xml --cov=copernic copernic
+	bandit --skip=B101 copernic/ -r
 	@echo "\033[95m\n\nYou may now run 'make lint'.\n\033[0m"
 
 lint: ## Lint the code
