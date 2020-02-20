@@ -22,7 +22,7 @@ fdb.api_version(620)
 db = fdb.open()
 
 
-ITEMS = ['uid', 'key', 'value', 'license']
+ITEMS = ['uid', 'key', 'value']
 
 var = nstore.var
 # nstore contain the latest version snapshot
@@ -50,7 +50,7 @@ def make_query(params):
     for index in range(5):
         index = str(index)
         pattern = []
-        for name in ['uid', 'key', 'value', 'license']:
+        for name in ['uid', 'key', 'value']:
             key = name + index
             try:
                 value = params[key]
@@ -146,7 +146,7 @@ def uid(request, uid):
 
     @fdb.transactional
     def get(tr, uid):
-        out = nstore.FROM(tr, uid, var('key'), var('value'), var('license'))
+        out = nstore.FROM(tr, uid, var('key'), var('value'))
         out = list(out)
         return out
 
@@ -183,7 +183,7 @@ def change(request, changeid):
         # TODO: move the vnstore
         out = vnstore._tuples.FROM(
             tr,
-            var('uid'), var('key'), var('value'), var('license'), var('alive'), changeid
+            var('uid'), var('key'), var('value'), var('alive'), changeid
         )
         out = list(out)
         return out
@@ -248,18 +248,13 @@ def change_add(request, changeid):
                     value = True
         # value is something interesting
         assert isinstance(value, (UUID, int, bool, str))
-        # get the license
-        license = request.POST['license']
-        license = license.strip()
-        if not license:
-            return HttpResponseBadRequest()
 
         @fdb.transactional
-        def add(tr, uid, key, value, license):
+        def add(tr, uid, key, value):
             vnstore.change_continue(tr, change.changeid)
-            vnstore.add(tr, uid, key, value, license)
+            vnstore.add(tr, uid, key, value)
 
-        add(db, uid, key, value, license)
+        add(db, uid, key, value)
 
         return redirect('/change/{}'.format(changeid))
     else:
@@ -307,19 +302,12 @@ def change_delete(request, changeid):
         # value is something interesting
         assert isinstance(value, (UUID, int, bool, str))
 
-        # get the license
-        license = request.POST['license']
-        license = license.strip()
-        if not license:
-            return HttpResponseBadRequest()
-        license = license.upper()
-
         @fdb.transactional
-        def delete(tr, uid, key, value, license):
+        def delete(tr, uid, key, value):
             vnstore.change_continue(tr, change.changeid)
-            vnstore.delete(tr, uid, key, value, license)
+            vnstore.delete(tr, uid, key, value)
 
-        delete(db, uid, key, value, license)
+        delete(db, uid, key, value)
 
         return redirect('/change/{}'.format(changeid))
     else:
@@ -334,7 +322,7 @@ def change_import(request, changeid):
         return render(request, 'change_import.html', dict(changeid=changeid))
     elif request.method == 'POST':
         file = request.FILES['file']
-        print(file)
+
         @fdb.transactional
         def save(tr, changeid, file):
             for line in file:
@@ -342,12 +330,12 @@ def change_import(request, changeid):
                 line = line.strip().decode('utf-8')
                 if not line:
                     continue
-                quad = json.loads(line)
+                triple = json.loads(line)
 
-                if (not isinstance(quad, list)) and len(quad) != 4:
+                if (not isinstance(triple, list)) and len(triple) != 3:
                     return HttpResponseBadRequest('Wrong format')
-                print(quad)
-                uid, key, value, license = quad
+
+                uid, key, value = triple
 
                 uid = uid.strip()
                 if not uid:
@@ -376,13 +364,9 @@ def change_import(request, changeid):
                 # value is something interesting
                 assert isinstance(value, (UUID, int, bool, str))
 
-                license = license.strip().upper()
-                if not license:
-                    return HttpResponseBadRequest('wrong license: {}'.format(license))
-
                 vnstore.change_continue(tr, changeid)
-                print(uid, key, value, license)
-                vnstore.add(tr, uid, key, value, license)
+
+                vnstore.add(tr, uid, key, value)
 
             return redirect('/change/{}/'.format(changeid))
 
@@ -412,14 +396,14 @@ def change_apply(request, changeid):
         # apply changes to snapshot
         changes = vnstore._tuples.FROM(
             tr,
-            var('uid'), var('key'), var('value'), var('license'), var('alive'), changeid
+            var('uid'), var('key'), var('value'), var('alive'), changeid
         )
         for change in changes:
             if change['alive']:
                 op = nstore.add
             else:
                 op = nstore.delete
-            op(tr, change['uid'], change['key'], change['value'], change['license'])
+            op(tr, change['uid'], change['key'], change['value'])
 
 
     apply(db, change, changeid)
