@@ -13,7 +13,7 @@
 
 <ul>
 {% for change in changes %}
-    <li><a href="/change/{{ change.changeid.hex.upper }}/">{{ change.changeid.hex.upper }} ({{ change.comment_set.count }} comments)</a></li>
+    <li><a href="/change/{{ change.changeid }}/">{{ change.changeid }} ({{ change.comment_set.count }} comments)</a></li>
 {% endfor %}
 </ul>
 

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}copernic - change request {{ change.changeid.hex.upper }} {% endblock %}
+{% block title %}copernic - change request {{ change.changeid }} {% endblock %}
 
 {% block container %}
 
@@ -8,41 +8,59 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
         <li class="breadcrumb-item"><a href="/changes">Change</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ change.changeid.hex.upper }}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ change.changeid }}</li>
     </ol>
 </nav>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col">
-            <h2>Change request (<a href="/change/{{ change.changeid.hex.upper }}/add">add</a> / <a href="/change/{{ change.changeid.hex.upper }}/delete">delete</a>)</h2>
-            <ul>
-                {% for change in changes %}
-                <li>foobar</li>
-                {% empty %}
-                <li>no changes, yet!</li>
-                {% endfor %}
-            </ul>
+<h2>Change request <small>(<a href="/change/{{ change.changeid }}/add">add</a> / <a href="/change/{{ change.changeid }}/delete">delete</a> / <a href="/change/{{ change.changeid }}/import">import</a>)</small></h2>
+<div class="container">
+    {% for change in changes %}
+    <div class="row" style="background: {% if not change.alive %}pink{% endif %}">
+        <div class="col" style="width: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            <a href="/uid/{{ change.uid }}/">{{ change.uid }}</a>
         </div>
         <div class="col">
-            <h2>Comments</h2>
-            {% for comment in comments %}
-            <div>
-                <p>{{ comment.body }}</p>
-                <p><small>{{ comment.created_at }}</small></p>
-            </div>
-            {% empty %}
-            <p>no comments, yet!</p>
-            {% endfor %}
-            <h2>Add a comment</h2>
-            <form method="POST" action="/change/{{ change.changeid.hex.upper }}/comment/add/">
-                {% csrf_token %}
-                <div class="form-group">
-                    <textarea name="body" class="form-control" id="body" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary mb-2">Submit</button>
-            </form>
+            {{ change.key }}
+        </div>
+        <div class="col">
+            {{ change.value }}
+        </div>
+        <div class="col">
+            {{ change.license }}
         </div>
     </div>
+    {% empty %}
+    <p>no changes, yet!</p>
+    {% endfor %}
 </div>
+
+<h2>Comments</h2>
+{% for comment in comments %}
+<div class="card">
+    <div class="card-body">
+        <p>{{ comment.body }}</p>
+        <p><small>{{ comment.created_at }}</small></p>
+    </div>
+</div>
+<br/>
+{% empty %}
+<p>no comments, yet!</p>
+{% endfor %}
+<h2>Add a comment</h2>
+<form method="POST" action="/change/{{ change.changeid }}/comment/add/">
+    {% csrf_token %}
+    <div class="form-group">
+            <textarea name="body" class="form-control" id="body" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary mb-2">Submit</button>
+</form>
+
+{% if superuser %}
+<h2>Superuser actions</h2>
+<form method="POST" action="/change/{{ change.changeid }}/apply/">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary mb-2">Apply changes</button>
+</form>
+{% endif %}
+
 {% endblock %}

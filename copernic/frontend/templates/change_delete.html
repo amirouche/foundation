@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}copernic - add to {{ changeid }} {% endblock %}
+
+{% block container %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/changes">Change</a></li>
+        <li class="breadcrumb-item"><a href="/change/{{ changeid }}">{{ changeid }}</a></li>
+        <li class="breadcrumb-item active">Delete</li>
+    </ol>
+</nav>
+
+<form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="uid">UID</label>
+        <input name="uid" type="text" class="form-control" id="uid">
+    </div>
+    <div class="form-group">
+        <label for="key">Key</label>
+        <input name="key" type="text" class="form-control" id="key">
+    </div>
+    <div class="form-group">
+        <label for="value">Value</label>
+        <textarea name="value" class="form-control" id="value" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="license">License</label>
+        <input name="license" type="text" class="form-control" id="license">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}copernic - query {% endblock %}
+
+{% block container %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Query</li>
+    </ol>
+</nav>
+
+<h2>Make query</h2>
+
+<p>Query variables must end with question mark suffix <code>?</code> like <code>uid?</code>. Any row with an empty field will be ignore.</p>
+
+<form method="GET">
+    <div class="form-row">
+        <div class="col">
+            <input name="uid0" type="text" class="form-control" placeholder="uid" value="{{patterns.uid0}}">
+        </div>
+        <div class="col">
+            <input name="key0" type="text" class="form-control" placeholder="key" value="{{patterns.key0}}">
+        </div>
+        <div class="col">
+            <input name="value0" type="text" class="form-control" placeholder="value" value="{{patterns.value0}}">
+        </div>
+        <div class="col">
+            <input name="license0" type="text" class="form-control" placeholder="license" value="{{patterns.license0}}">
+        </div>
+    </div>
+    <br/>
+    <div class="form-row">
+        <div class="col">
+            <input name="uid1" type="text" class="form-control" placeholder="uid" value="{{patterns.uid1}}">
+        </div>
+        <div class="col">
+            <input name="key1" type="text" class="form-control" placeholder="key" value="{{patterns.key1}}">
+        </div>
+        <div class="col">
+            <input name="value1" type="text" class="form-control" placeholder="value" value="{{patterns.value1}}">
+        </div>
+        <div class="col">
+            <input name="license1" type="text" class="form-control" placeholder="license" value="{{patterns.license1}}">
+        </div>
+    </div>
+    <br/>
+    <div class="form-row">
+        <div class="col">
+            <input name="uid2" type="text" class="form-control" placeholder="uid" value="{{patterns.uid2}}">
+        </div>
+        <div class="col">
+            <input name="key2" type="text" class="form-control" placeholder="key" value="{{patterns.key2}}">
+        </div>
+        <div class="col">
+            <input name="value2" type="text" class="form-control" placeholder="value" value="{{patterns.value2}}">
+        </div>
+        <div class="col">
+            <input name="license2" type="text" class="form-control" placeholder="license" value="{{patterns.license2}}">
+        </div>
+    </div>
+    <br/>
+    <div class="form-row">
+        <div class="col">
+            <input name="uid3" type="text" class="form-control" placeholder="uid" value="{{patterns.uid3}}">
+        </div>
+        <div class="col">
+            <input name="key3" type="text" class="form-control" placeholder="key" value="{{patterns.key3}}">
+        </div>
+        <div class="col">
+            <input name="value3" type="text" class="form-control" placeholder="value" value="{{patterns.value3}}">
+        </div>
+        <div class="col">
+            <input name="license3" type="text" class="form-control" placeholder="license" value="{{patterns.license3}}">
+        </div>
+    </div>
+    <br/>
+    <div class="form-row">
+        <div class="col">
+            <input name="uid4" type="text" class="form-control" placeholder="uid" value="{{patterns.uid4}}">
+        </div>
+        <div class="col">
+            <input name="key4" type="text" class="form-control" placeholder="key" value="{{patterns.key4}}">
+        </div>
+        <div class="col">
+            <input name="value4" type="text" class="form-control" placeholder="value" value="{{patterns.value4}}">
+        </div>
+        <div class="col">
+            <input name="license4" type="text" class="form-control" placeholder="license" value="{{patterns.license4}}">
+        </div>
+    </div>
+    <br/>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<br/>
+
+<h2>Results</h2>
+
+<div class="row">
+    {% for variable in variables %}
+    <div class="col">
+        <code>{{ variable }}</code>
+    </div>
+    {% endfor %}
+</div>
+
+{% for binding in bindings %}
+<div class="row">
+    {% for variable in variables %}
+    <div class="col">
+        {{ binding|getattr:variable }}
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}
+
+{% endblock %}

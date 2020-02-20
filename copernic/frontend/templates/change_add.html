@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}copernic - add to {{ changeid }} {% endblock %}
+
+{% block container %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/changes">Change</a></li>
+        <li class="breadcrumb-item"><a href="/change/{{ changeid }}">{{ changeid }}</a></li>
+        <li class="breadcrumb-item active">Add</li>
+    </ol>
+</nav>
+
+<form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="uid">UID</label>
+        <input name="uid" type="text" class="form-control" id="uid">
+        <small class="form-text text-muted">To allocate a new unique identifier leave it empty.</small>
+    </div>
+    <div class="form-group">
+        <label for="key">Key</label>
+        <input name="key" type="text" class="form-control" id="key">
+        <small class="form-text text-muted">Must be <code>kebab-case</code>.</small>
+    </div>
+    <div class="form-group">
+        <label for="value">Value</label>
+        <textarea name="value" class="form-control" id="value" rows="3"></textarea>
+        <small class="form-text text-muted">Can be a number, a boolean (<code>true</code>, <code>false</code>) or some text.  There is no need to wrap text inside double quotes.</small>
+    </div>
+    <div class="form-group">
+        <label for="license">License</label>
+        <input name="license" type="text" class="form-control" id="license">
+        <small class="form-text text-muted">Small label of the license.</small>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{% endblock %}

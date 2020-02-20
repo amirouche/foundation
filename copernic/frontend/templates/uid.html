@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}copernic -  {{ uid }} {% endblock %}
+
+{% block container %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ uid }}</li>
+    </ol>
+</nav>
+
+{% for tuple in tuples %}
+<div class="row">
+    <div class="col">
+        {{ tuple.key }}
+    </div>
+    <div class="col">
+        {{ tuple.value }}
+    </div>
+    <div class="col">
+        {{ tuple.license }}
+    </div>
+</div>
+{% empty %}
+<p>nothing, yet!</p>
+{% endfor %}
+
+{% endblock %}

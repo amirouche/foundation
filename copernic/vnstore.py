@@ -40,7 +40,7 @@ class VNStore(VNStoreBase):
         # (alive?).
         self._tuples = nstore.open(
             subspace + ['tuples'],
-            items + ['changeid', 'alive?']
+            items + ['alive?', 'changeid']
         )
 
     def change_create(self, tr):
