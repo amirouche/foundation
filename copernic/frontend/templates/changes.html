@@ -11,10 +11,14 @@
     </ol>
 </nav>
 
+<h2>Changes</h2>
+
+<p class="form-text text-muted">Here is the history of the database and changes that remain to be applied by a superuser. Pending changes are marked with a <span class="badge badge-secondary">New</span> badge.</p>
+
 {% for change in changes %}
 <div class="card">
     <div class="card-body">
-        <p>{{ change.message }}</p>
+        <p><span class="badge badge-secondary">{% if change.status == 1 %}New{% endif %}</span> {{ change.message }}</p>
         <a href="/change/{{ change.changeid }}/">{{ change.changeid }} @ {{ change.created_at }} ({{ change.comment_set.count }} comments)</a>
     </div>
 </div>
