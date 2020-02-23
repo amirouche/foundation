@@ -11,10 +11,15 @@
     </ol>
 </nav>
 
-<ul>
 {% for change in changes %}
-    <li><a href="/change/{{ change.changeid }}/">{{ change.changeid }} ({{ change.comment_set.count }} comments)</a></li>
+<div class="card">
+    <div class="card-body">
+        <p>{{ change.message }}</p>
+        <a href="/change/{{ change.changeid }}/">{{ change.changeid }} @ {{ change.created_at }} ({{ change.comment_set.count }} comments)</a>
+    </div>
+</div>
+<br/>
 {% endfor %}
-</ul>
+<br/>
 
 {% endblock %}

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # copernic (https://github.com/amirouche/copernic)
 
 # Copyright (C) 2020 Amirouche Boubekki
@@ -14,7 +15,6 @@
 
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
 import os
 import sys

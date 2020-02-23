@@ -27,6 +27,7 @@ class ChangeRequest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     changeid = models.UUIDField()
     status = models.IntegerField(choices=STATUS_CHOICES, default=STATUS_WIP)
+    message = models.TextField()
 
 
 class Comment(models.Model):

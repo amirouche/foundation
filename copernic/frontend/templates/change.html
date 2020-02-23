@@ -13,6 +13,17 @@
 </nav>
 
 <h2>Change request <small>(<a href="/change/{{ change.changeid }}/add">add</a> / <a href="/change/{{ change.changeid }}/delete">delete</a> / <a href="/change/{{ change.changeid }}/import">import</a>)</small></h2>
+
+<div class="card">
+    <div class="card-body">
+        <p>{{ change.message }}</p>
+        <p><small>{{ change.created_at }}</small></p>
+    </div>
+</div>
+
+<br/>
+
+
 <div class="container">
     {% for change in changes %}
     <div class="row" style="background: {% if not change.alive %}pink{% endif %}">

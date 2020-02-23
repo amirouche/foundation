@@ -177,16 +177,27 @@ def changes(request):
 
 def change_new(request):
 
-    @fdb.transactional
-    def change_create(tr):
-        changeid = vnstore.change_create(tr)
-        change = ChangeRequest(changeid=changeid)
-        change.save()
-        return changeid
+    if request.method == 'GET':
+        return render(request, 'change_new.html')
+    else:
+        message = request.POST['message']
+        message = message.strip()
+        if len(message) < 160:
+            return HttpResponseBadRequest('Message too small (min 160)')
+        if len(message) > 2048:
+            return HttpResponseBadRequest('Message too big (max 2048)')
 
-    changeid = change_create(db)
+        @fdb.transactional
+        def change_create(tr, message):
+            changeid = vnstore.change_create(tr)
+            vnstore.change_message(tr, changeid, message)
+            change = ChangeRequest(changeid=changeid, message=message)
+            change.save()
+            return changeid
 
-    return redirect('/change/{}/'.format(changeid.hex.upper()))
+        changeid = change_create(db, message)
+
+        return redirect('/change/{}/'.format(changeid))
 
 
 def change(request, changeid):

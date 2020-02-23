@@ -79,7 +79,7 @@ class VNStore(VNStoreBase):
         for binding in bindings:
             self._changes.delete(tr, changeid, 'message', binding['message'])
         # add message
-        self._changes.add(tr, change, 'message', message)
+        self._changes.add(tr, changeid, 'message', message)
 
     def change_apply(self, tr, changeid):
         # apply change by settings a verionstamp
