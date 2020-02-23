@@ -19,7 +19,7 @@ setup(
     long_description_content_type='text/markdown',
     py_modules = ['copernic'],
     zip_safe=False,
-    license="Cooperative Software License",
+    license="AGPLv3+",
     classifiers=[
         "Programming Language :: Python :: 3",
     ],
