@@ -89,7 +89,9 @@ class Command(BaseCommand):
 
             vnstore.add(tr, uid, key, value)
 
-        for line in file:
+        for index, line in enumerate(file):
+            if index % 100_000 == 0:
+                print(index)
             save(db, changeid, line)
 
         @fdb.transactional
