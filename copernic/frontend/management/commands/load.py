@@ -88,7 +88,6 @@ class Command(BaseCommand):
 
                 vnstore.change_continue(tr, changeid)
 
-                print(uid, key, value)
                 vnstore.add(tr, uid, key, value)
 
         save(db, changeid, file)
