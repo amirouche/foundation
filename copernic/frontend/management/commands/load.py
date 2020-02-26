@@ -45,52 +45,52 @@ class Command(BaseCommand):
         changeid = change_create(db, message)
 
         @fdb.transactional
-        def save(tr, changeid, file):
-            for line in file:
-                # TODO: need more validation
-                line = line.strip()
-                if not line:
-                    continue
-                triple = json.loads(line)
+        def save(tr, changeid, line):
+            # TODO: need more validation
+            line = line.strip()
+            if not line:
+                continue
+            triple = json.loads(line)
 
-                if (not isinstance(triple, list)) and len(triple) != 3:
-                    raise Exception('Wrong format')
+            if (not isinstance(triple, list)) and len(triple) != 3:
+                raise Exception('Wrong format')
 
-                uid, key, value = triple
+            uid, key, value = triple
 
-                uid = uid.strip()
-                if not uid:
-                    raise Exception('uid is required')
+            uid = uid.strip()
+            if not uid:
+                raise Exception('uid is required')
 
+            try:
+                uid = UUID(hex=uid)
+            except ValueError as exc:
+                raise Exception('not a uuid: {}'.format(uid))
+
+            key = key.strip().lower()
+            if not key:
+                raise Exception('wrong key: {}'.format(key))
+
+            if not value:
+                raise Exception('empty value')
+
+            if isinstance(value, str):
                 try:
-                    uid = UUID(hex=uid)
-                except ValueError as exc:
-                    raise Exception('not a uuid: {}'.format(uid))
+                    value = UUID(hex=value)
+                except ValueError:
+                    if value.lower() == 'false':
+                        value = False
+                    elif value.lower() == 'true':
+                        value = True
 
-                key = key.strip().lower()
-                if not key:
-                    raise Exception('wrong key: {}'.format(key))
+            # value is something interesting
+            assert isinstance(value, (UUID, int, bool, str))
 
-                if not value:
-                    raise Exception('empty value')
+            vnstore.change_continue(tr, changeid)
 
-                if isinstance(value, str):
-                    try:
-                        value = UUID(hex=value)
-                    except ValueError:
-                        if value.lower() == 'false':
-                            value = False
-                        elif value.lower() == 'true':
-                            value = True
+            vnstore.add(tr, uid, key, value)
 
-                # value is something interesting
-                assert isinstance(value, (UUID, int, bool, str))
-
-                vnstore.change_continue(tr, changeid)
-
-                vnstore.add(tr, uid, key, value)
-
-        save(db, changeid, file)
+        for line in file:
+            save(db, changeid, line)
 
         @fdb.transactional
         def apply(tr, change, changeid):
