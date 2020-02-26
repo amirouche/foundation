@@ -226,7 +226,7 @@ def change(request, changeid):
             tr,
             var('uid'), var('key'), var('value'), var('alive'), changeid
         )
-        out = list(out)
+        out = list(take(out, 1000))
         return out
 
     changes = fetch(db, changeid)
