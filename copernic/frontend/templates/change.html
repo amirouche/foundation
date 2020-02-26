@@ -30,13 +30,13 @@
     {% for change in changes %}
     <div class="row" style="background: {% if not change.alive %}pink{% endif %}">
         <div class="col" style="width: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            <a href="/uid/{{ change.uid }}/">{{ change.uid }}</a>
+            {{ change.uid | linkify }}
         </div>
         <div class="col">
-            {{ change.key }}
+            {{ change.key | linkify  }}
         </div>
         <div class="col">
-            {{ change.value }}
+            {{ change.value | linkify  }}
         </div>
     </div>
     {% empty %}
