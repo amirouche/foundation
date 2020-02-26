@@ -56,11 +56,11 @@ def getattr(dictionary, key):
 @register.filter
 def linkify(obj):
     if isinstance(obj, UUID):
-        link = """<a href="/query/?uid0={}&key0=key%3F&value0=value%3F">{}</a>"""
+        link = """<a target="_blank" href="/query/?uid0={}&key0=key%3F&value0=value%3F">{}</a>"""
         link = format_html(link, obj, obj)
         return link
     if isinstance(obj, str) and (obj.startswith('http://') or obj.startswith('https://')):
-        link = """<a href="{}">{}</a>"""
+        link = """<a target="_blank" href="{}">{}</a>"""
         link = format_html(link, obj, obj)
         return link
     return obj
