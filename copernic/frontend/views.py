@@ -180,15 +180,9 @@ def uid(request, uid):
     except ValueError:
         return HttpResponseNotFound()
 
-    @fdb.transactional
-    def get(tr, uid):
-        out = nstore.FROM(tr, uid, var('key'), var('value'))
-        out = list(out)
-        return out
-
-    tuples = get(db, uid)
-
-    return render(request, 'uid.html', dict(uid=uid, tuples=tuples))
+    url = "/query/?uid0={}&key0=key%3F&value0=value%3F"
+    url = url.format(uid)
+    return redirect(url)
 
 def changes(request):
     changes = ChangeRequest.objects.all().order_by('-created_at')
