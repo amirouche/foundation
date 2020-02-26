@@ -7,13 +7,13 @@
 ## Abstract
 
 copernic is web application that is (mostly) implemented with Python
-programming language.  It is supported by a database that is a
-versopmed quad store versioned.  It is possible to do time traveling
-queries at any point in history while still being efficient to query
-and modify the latest version.  The versioned quad store is
-implemented using a novel approach dubbed generic tuple store.
-copernic goal is to demonstrate that versioned databases allow to
-implement workflows that ease cooperation.
+programming language.  It is supported by a database that is a triple
+store versioned.  It is possible to do time traveling queries at any
+point in history while still being efficient to query and modify the
+latest version.  The versioned triple store is implemented using a novel
+approach dubbed generic tuple store.  copernic goal is to demonstrate
+that versioned databases allow to implement workflows that ease
+cooperation.
 
 ## Keywords
 
@@ -43,7 +43,7 @@ mechanic is explicit about the actual human workflow in entreprise
 settings, in particular, when a person validates a change made by
 another person.
 
-The *versioned quad store* make the implementation of such mechanics
+The *versioned triple store* make the implementation of such mechanics
 more systematic and less error prone as the implementation can be
 shared across various tools and organisations.
 
@@ -65,10 +65,10 @@ is good enough according to [Collaborative Open Data versioning: a
 pragmatic approach using Linked Data, by Canova *et
 al.*](https://core.ac.uk/download/pdf/76527782.pdf)
 
-copernic use a novel approach to store quads in an [ordered key-value
+copernic use a novel approach to store triples in an [ordered key-value
 store](https://en.wikipedia.org/wiki/Ordered_Key-Value_Store). It use
 [FoundationDB database storage engine](https://www.foundationdb.org/)
-to deliver a pragmatic versatile ACID-compliant versioned quad store
+to deliver a pragmatic versatile ACID-compliant versioned triple store
 where people can cooperate around the making of knowledge.  copernic
 only stores changes between versions.  It has also a snapshot of the
 latest version.  copernic does not rely on the theory of patches
