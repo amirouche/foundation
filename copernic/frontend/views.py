@@ -25,6 +25,7 @@ from django.http import HttpResponseBadRequest
 from django.http import HttpResponseForbidden
 from django.http import HttpResponseNotFound
 from django.template.defaulttags import register
+from django.utils.html import format_html
 
 import fdb
 
@@ -50,6 +51,20 @@ vnstore = vnstore.open(['copernic', 'vnstore'], ITEMS)
 @register.filter
 def getattr(dictionary, key):
     return dictionary.get(key)
+
+@register.filter
+def linkify(obj):
+    if isinstance(obj, UUID):
+        link = """<a href="/query/?uid0={}&key0=key%3F&value0=value%3F">{}</a>"""
+        link = format_html(link, obj, obj)
+        return link
+    if isinstance(obj, str) and (obj.startswith('http://') or obj.startswith('https://')):
+        link = """<a href="{}">{}</a>"""
+        link = format_html(link, obj, obj)
+        return link
+    return obj
+
+
 
 def index(request):
     return render(request, 'index.html')

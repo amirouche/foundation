@@ -94,7 +94,7 @@
 <div class="row">
     {% for variable in variables %}
     <div class="col">
-        {{ binding|getattr:variable }}
+        {{ binding|getattr:variable|linkify }}
     </div>
     {% endfor %}
 </div>
