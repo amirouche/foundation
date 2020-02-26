@@ -49,7 +49,7 @@ class Command(BaseCommand):
             # TODO: need more validation
             line = line.strip()
             if not line:
-                continue
+                return
             triple = json.loads(line)
 
             if (not isinstance(triple, list)) and len(triple) != 3:
