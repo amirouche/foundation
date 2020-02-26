@@ -52,6 +52,7 @@ vnstore = vnstore.open(['copernic', 'vnstore'], ITEMS)
 def getattr(dictionary, key):
     return dictionary.get(key)
 
+
 @register.filter
 def linkify(obj):
     if isinstance(obj, UUID):
@@ -65,9 +66,13 @@ def linkify(obj):
     return obj
 
 
-
 def index(request):
-    return render(request, 'index.html')
+    @fdb.transactional
+    def fetch_counter(tr):
+        count = nstore.count(tr)
+        return count
+    count = fetch_counter(db)
+    return render(request, 'index.html', dict(count=count))
 
 
 def about(request):

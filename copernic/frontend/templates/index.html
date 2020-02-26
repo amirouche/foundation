@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load humanize %}
+
 {% block title %}copernic - index{% endblock %}
 
 {% block container %}
@@ -15,6 +17,8 @@
             knowledge bases, and structured data that are bigger than
             memory.
         </p>
+        <p>As of right now there is {{ count | intword }} triples in the knowledge base.</p>
+
     </div>
 </div> <!-- /container -->
 {% endblock %}

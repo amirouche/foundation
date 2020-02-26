@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from itertools import permutations
+import struct
 
 from immutables import Map
 
@@ -49,6 +50,10 @@ class Variable:
 var = Variable
 
 
+ONE = struct.pack('<q', 1)
+MINUS_ONE = struct.pack('<q', -1)
+
+
 def stringify(list):
     return "".join(str(x) for x in list)
 
@@ -65,6 +70,7 @@ class NStore(NStoreBase):
         self._prefix = prefix
         self._items = items
         self._indices = compute_indices(len(items))
+        self._counter_key = fdb.tuple.pack((self._prefix, "counter"))
 
     def add(self, tr, *items):
         assert len(items) == len(self._items), "invalid item count"
@@ -79,12 +85,25 @@ class NStore(NStoreBase):
             key = (self._prefix, subspace, permutation)
             set(pack(key), b"")
 
+        # increment the count of triples
+        tr.add(self._counter_key, ONE)
+
     def delete(self, tr, *items):
         assert len(items) == len(self._items), "invalid item count"
         for subspace, index in enumerate(self._indices):
             permutation = list(items[i] for i in index)
             key = (self._prefix, subspace, permutation)
             del tr[fdb.tuple.pack(key)]
+
+        # decrement count of tuples
+        tr.add(self._counter_key, MINUS_ONE)
+
+    def count(self, tr):
+        value = tr.get(self._counter_key)
+        if value == None:
+            return 0
+        else:
+            return struct.unpack('<q', value[:])[0]
 
     def ask(self, tr, *items):
         assert len(items) == len(self._items), "invalid item count"
