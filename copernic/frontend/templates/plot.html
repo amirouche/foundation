@@ -88,7 +88,7 @@
     var trace1 = {
     x: [{% for binding in bindings %}{{ binding|getattr:"x?"}}{% if not forloop.last %}, {% endif %}{% endfor %}],
     y: [{% for binding in bindings %}{{ binding|getattr:"y?"}}{% if not forloop.last %}, {% endif %}{% endfor %}],
-    type: 'scatter'
+    type: 'bar'
     };
 
     var data = [trace1];
