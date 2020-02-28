@@ -174,6 +174,39 @@ def query(request):
     return render(request, 'query.html', context)
 
 
+def plot(request):
+    if request.GET:
+        variables, patterns = make_query(request.GET)
+
+        if not patterns:
+            msg = 'There is no complete pattern...'
+            return HttpResponseBadRequest(msg)
+
+        if all(isinstance(x, var) for x in patterns[0]):
+            msg = 'The first pattern must not be only made of variables!'
+            return HttpResponseBadRequest(msg)
+
+        def do(tr, patterns):
+            out = nstore.FROM(tr, *patterns[0])
+            # see nstore.select
+            for pattern in patterns[1:]:
+                where = nstore.where(tr, *pattern)
+                out = where(out)
+            out = list(take(out, 100))
+            return out
+
+        bindings = do(db, patterns)
+    else:
+        variables = []
+        bindings = []
+
+    context = dict(
+        bindings=bindings,
+        patterns=request.GET,
+    )
+    return render(request, 'plot.html', context)
+
+
 def uid(request, uid):
     try:
         uid = UUID(uid)

@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}copernic - query {% endblock %}
+{% block title %}copernic - plot{% endblock %}
 
 {% block container %}
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Query</li>
+        <li class="breadcrumb-item active" aria-current="page">Plot</li>
     </ol>
 </nav>
 
-<h2>Make query</h2>
+<h2>Make plot</h2>
 
-<p class="form-text text-muted">This is a pattern matching query builder.  It other words, it will match triples found in the database according the patterns that are submitted by the form.  Query variables must end with question mark suffix <code>?</code> like <code>uid?</code>.  Any row with an empty field will be ignored. Check out this example query: <a href="/query/?uid0=0uid%3F&key0=title&value0=copernic&uid1=0uid%3F&key1=key%3F&value1=value%3F">"what is copernic"</a>. Variables are sorted in the result table.</p>
+<p class="form-text text-muted">This is a pattern matching plot builder.  It other words, it will match triples found in the database according the patterns that are submitted by the form.  Query variables must end with question mark suffix <code>?</code> like <code>uid?</code>.  Any row with an empty field will be ignored. Check out this example query: <a href="/query/?uid0=0uid%3F&key0=title&value0=copernic&uid1=0uid%3F&key1=key%3F&value1=value%3F">"what is copernic"</a>. Variables are sorted in the result table.  The plot will use the variables <code>x?</code> and <code>y?</code>.</p>
 
 <form method="GET">
     <div class="form-row">
@@ -80,24 +80,19 @@
 </form>
 <br/>
 
-<h2>Results <small>(<a href="/plot/?uid0={{patterns.uid0}}&key0={{patterns.key0}}&value0={{patterns.value0}}&uid1={{patterns.uid1}}&key1={{patterns.key1}}&value1={{patterns.value1}}&uid2={{patterns.uid2}}&key2={{patterns.key2}}&value2={{patterns.value2}}&uid3={{patterns.uid3}}&key3={{patterns.key3}}&value3={{patterns.value3}}&uid4={{patterns.uid4}}&key4={{patterns.key4}}&value4={{patterns.value4}}">plot</a>)</small></h2>
+<h2>Plot</h2>
 
-<div class="row">
-    {% for variable in variables %}
-    <div class="col">
-        <code>{{ variable }}</code>
-    </div>
-    {% endfor %}
-</div>
+<div id="plot"></div>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script type="text/javascript">
+    var trace1 = {
+    x: [{% for binding in bindings %}{{ binding|getattr:"x?"}}{% if not forloop.last %}, {% endif %}{% endfor %}],
+    y: [{% for binding in bindings %}{{ binding|getattr:"y?"}}{% if not forloop.last %}, {% endif %}{% endfor %}],
+    type: 'scatter'
+    };
 
-{% for binding in bindings %}
-<div class="row">
-    {% for variable in variables %}
-    <div class="col">
-        {{ binding|getattr:variable|linkify }}
-    </div>
-    {% endfor %}
-</div>
-{% endfor %}
+    var data = [trace1];
 
+    Plotly.newPlot('plot', data);
+</script>
 {% endblock %}

@@ -36,6 +36,7 @@ urlpatterns = [
     path('', frontend.index),
     path('about/', frontend.about),
     path('query/', frontend.query),
+    path('plot/', frontend.plot),
     path('admin/', admin.site.urls),
     # uid
     path('uid/<uid>/', frontend.uid),
@@ -43,9 +44,6 @@ urlpatterns = [
     path('changes/', frontend.changes),
     path('change/new/', frontend.change_new),
     path('change/<changeid>/', frontend.change),
-    # path('change/<changeid>/add/', frontend.change_add),
-    # path('change/<changeid>/delete/', frontend.change_delete),
-    # path('change/<changeid>/apply/', frontend.change_apply),
     # change comment
     path('change/<changeid>/comment/add/', frontend.comment_add),
     path('change/<changeid>/add/', frontend.change_add),
