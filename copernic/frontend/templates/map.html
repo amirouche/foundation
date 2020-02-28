@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}copernic - query {% endblock %}
+{% block title %}copernic - plot{% endblock %}
 
 {% block container %}
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Query</li>
+        <li class="breadcrumb-item active" aria-current="page">Plot</li>
     </ol>
 </nav>
 
-<h2>Make query</h2>
+<h2>Make map</h2>
 
-<p class="form-text text-muted">This is a pattern matching query builder.  It other words, it will match triples found in the database according the patterns that are submitted by the form.  Query variables must end with question mark suffix <code>?</code> like <code>uid?</code>.  Any row with an empty field will be ignored. Check out this example query: <a href="/query/?uid0=0uid%3F&key0=title&value0=copernic&uid1=0uid%3F&key1=key%3F&value1=value%3F">"what is copernic"</a>. Variables are sorted in the result table.</p>
+<p class="form-text text-muted">This is a pattern matching plot builder.  It other words, it will match triples found in the database according the patterns that are submitted by the form.  Query variables must end with question mark suffix <code>?</code> like <code>uid?</code>.  Any row with an empty field will be ignored. The map will use the variables <code>latitude?</code> and <code>longitude?</code>.</p>
 
 <form method="GET">
     <div class="form-row">
@@ -80,24 +80,28 @@
 </form>
 <br/>
 
-<h2>Results <small>(<a href="/plot/?uid0={{patterns.uid0}}&key0={{patterns.key0}}&value0={{patterns.value0}}&uid1={{patterns.uid1}}&key1={{patterns.key1}}&value1={{patterns.value1}}&uid2={{patterns.uid2}}&key2={{patterns.key2}}&value2={{patterns.value2}}&uid3={{patterns.uid3}}&key3={{patterns.key3}}&value3={{patterns.value3}}&uid4={{patterns.uid4}}&key4={{patterns.key4}}&value4={{patterns.value4}}">plot</a> / <a href="/map/?uid0={{patterns.uid0}}&key0={{patterns.key0}}&value0={{patterns.value0}}&uid1={{patterns.uid1}}&key1={{patterns.key1}}&value1={{patterns.value1}}&uid2={{patterns.uid2}}&key2={{patterns.key2}}&value2={{patterns.value2}}&uid3={{patterns.uid3}}&key3={{patterns.key3}}&value3={{patterns.value3}}&uid4={{patterns.uid4}}&key4={{patterns.key4}}&value4={{patterns.value4}}">map</a>)</small></h2>
+<h2>Map</h2>
 
-<div class="row">
-    {% for variable in variables %}
-    <div class="col">
-        <code>{{ variable }}</code>
-    </div>
-    {% endfor %}
-</div>
+<div id="map" style="height: 500px; margin-bottom: 100px;"></div>
 
-{% for binding in bindings %}
-<div class="row">
-    {% for variable in variables %}
-    <div class="col">
-        {{ binding|getattr:variable|linkify }}
-    </div>
-    {% endfor %}
-</div>
-{% endfor %}
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+        integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+        crossorigin=""></script>
 
+<script type="text/javascript">
+ var token = "pk.eyJ1IjoiYW1pcm91Y2hlIiwiYSI6ImNrNzV4M3ljejBlcG4zZnIxM3V3NHZ3NTUifQ.ZzqYbUCaWRaM06p-3fyQrg"
+ var map = L.map('map').setView([51.505, -0.09], 1);
+ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + token, {
+     maxZoom: 18,
+     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+		  '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+		  'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+     id: 'mapbox/streets-v11',
+     tileSize: 512,
+     zoomOffset: -1
+ }).addTo(map);
+ {% for binding in bindings %}
+ var marker = L.marker([{{binding|getattr:"latitude?"}}, {{binding|getattr:"longitude?"}}]).addTo(map);
+ {% endfor %}
+</script>
 {% endblock %}

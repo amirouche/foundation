@@ -37,6 +37,7 @@ urlpatterns = [
     path('about/', frontend.about),
     path('query/', frontend.query),
     path('plot/', frontend.plot),
+    path('map/', frontend.map),
     path('admin/', admin.site.urls),
     # uid
     path('uid/<uid>/', frontend.uid),
