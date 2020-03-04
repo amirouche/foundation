@@ -33,6 +33,7 @@ import vnstore
 import nstore
 from .models import ChangeRequest
 from .models import Comment
+from .helpers import guess
 
 
 fdb.api_version(620)
@@ -78,35 +79,6 @@ def index(request):
 def about(request):
     return render(request, 'about.html')
 
-def guess(value):
-    if isinstance(value, (bool, int, float)):
-        return value
-
-    if not isinstance(value, str):
-        raise ValueError()
-
-    # That will will coerce uuid, boolean, and numbers as string into
-    # their python type.  In particular, during the import process.
-    # It is not clear in what situation one would want to represent a
-    # number as a string.  Similarly for boolean and uuid.
-
-    value = value.strip()
-    if not value:
-        raise ValueError()
-    # Try to guess the Python object
-    try:
-        value = UUID(hex=value)
-    except ValueError:
-        try:
-            value = int(value)
-        except ValueError:
-            if value.lower() == 'false':
-                value = False
-            elif value.lower() == 'true':
-                value = True
-            else:
-                # just a string
-                value = value
 
 def make_query(params):
     # make query for the win ;-)
@@ -416,10 +388,6 @@ def change_import(request, changeid):
                 return HttpResponseBadRequest('Wrong format')
 
             uid, key, value = triple
-
-            uid = uid.strip()
-            if not uid:
-                return HttpResponseBadRequest('uid is required')
 
             try:
                 uid = guess(uid)

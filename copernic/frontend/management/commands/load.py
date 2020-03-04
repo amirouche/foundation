@@ -7,6 +7,7 @@ from django.core.management.base import BaseCommand, CommandError
 import vnstore
 import nstore
 from frontend.models import ChangeRequest
+from frontend.helpers import guess
 
 
 fdb.api_version(620)
@@ -46,7 +47,8 @@ class Command(BaseCommand):
 
         @fdb.transactional
         def save(tr, changeid, line):
-            # TODO: need more validation
+            # TODO: this is the same logic as
+            # frontend.views.change_import. refactor.
             line = line.strip()
             if not line:
                 return
@@ -57,33 +59,20 @@ class Command(BaseCommand):
 
             uid, key, value = triple
 
-            uid = uid.strip()
-            if not uid:
-                raise Exception('uid is required')
+            try:
+                uid = guess(uid)
+            except ValueError:
+                return Exception('bad uid: {}'.format(uid))
 
             try:
-                uid = UUID(hex=uid)
-            except ValueError as exc:
-                raise Exception('not a uuid: {}'.format(uid))
+                key = guess(key)
+            except ValueError:
+                return Exception('bad key: {}'.format(key))
 
-            key = key.strip().lower()
-            if not key:
-                raise Exception('wrong key: {}'.format(key))
-
-            if not value:
-                raise Exception('empty value')
-
-            if isinstance(value, str):
-                try:
-                    value = UUID(hex=value)
-                except ValueError:
-                    if value.lower() == 'false':
-                        value = False
-                    elif value.lower() == 'true':
-                        value = True
-
-            # value is something interesting
-            assert isinstance(value, (UUID, int, bool, str))
+            try:
+                value = guess(value)
+            except ValueError:
+                return Exception('bad value: {}'.format(value))
 
             vnstore.change_continue(tr, changeid)
 
