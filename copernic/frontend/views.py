@@ -261,8 +261,8 @@ def change_new(request):
     else:
         message = request.POST['message']
         message = message.strip()
-        if len(message) < 50:
-            return HttpResponseBadRequest('Message too small (min 50)')
+        if len(message) < 30:
+            return HttpResponseBadRequest('Message too small (min 30)')
         if len(message) > 2048:
             return HttpResponseBadRequest('Message too big (max 2048)')
 
