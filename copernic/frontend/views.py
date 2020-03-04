@@ -79,6 +79,17 @@ def about(request):
     return render(request, 'about.html')
 
 def guess(value):
+    if isinstance(value, (bool, int, float)):
+        return value
+
+    if not isinstance(value, str):
+        raise ValueError()
+
+    # That will will coerce uuid, boolean, and numbers as string into
+    # their python type.  In particular, during the import process.
+    # It is not clear in what situation one would want to represent a
+    # number as a string.  Similarly for boolean and uuid.
+
     value = value.strip()
     if not value:
         raise ValueError()
@@ -395,34 +406,58 @@ def change_import(request, changeid):
         file = request.FILES['file']
 
         @fdb.transactional
-        def save(tr, changeid, file):
-            for line in file:
-                # TODO: need more validationc
-                line = line.strip().decode('utf-8')
-                if not line:
-                    continue
-                triple = json.loads(line)
+        def save(tr, changeid, line):
+            line = line.strip().decode('utf-8')
+            if not line:
+                continue
+            triple = json.loads(line)
 
-                if (not isinstance(triple, list)) and len(triple) != 3:
-                    return HttpResponseBadRequest('Wrong format')
+            if (not isinstance(triple, list)) and len(triple) != 3:
+                return HttpResponseBadRequest('Wrong format')
 
-                uid, key, value = triple
+            uid, key, value = triple
 
-                uid = uid.strip()
-                if not uid:
-                    return HttpResponseBadRequest('uid is required')
+            uid = uid.strip()
+            if not uid:
+                return HttpResponseBadRequest('uid is required')
 
+            try:
                 uid = guess(uid)
+            except ValueError:
+                return HttpResponseBadRequest('bad uid: {}'.format(uid))
+
+            try:
                 key = guess(key)
+            except ValueError:
+                return HttpResponseBadRequest('bad key: {}'.format(key))
+
+            try:
                 value = guess(value)
+            except ValueError:
+                return HttpResponseBadRequest('bad value: {}'.format(value))
 
-                vnstore.change_continue(tr, changeid)
+            vnstore.change_continue(tr, changeid)
 
-                vnstore.add(tr, uid, key, value)
+            vnstore.add(tr, uid, key, value)
 
-            return redirect('/change/{}/'.format(changeid))
+            return None
 
-        return save(db, changeid, file)
+        for line in file:
+            # Instead of one big transaction, each line is its own
+            # transaction this allows to possibly import large-ish
+            # files (see
+            # https://apple.github.io/foundationdb/known-limitations.html).
+            # In cases where the import process would timeout browser
+            # side or proxy side.  One should rely on admin command
+            # load command.
+            out = save(db, changeid, line)
+            if out is not None:
+                # XXX: save might return an HTTP response in case it
+                # fails validation.  Validating then importing known
+                # valid input would be slower.
+                return out
+        # Import succeed!
+        redirect('/change/{}/'.format(changeid))
     else:
         return HttpResponseBadRequest()
 
