@@ -150,6 +150,7 @@ def query(request):
             msg = 'The first pattern must not be only made of variables!'
             return HttpResponseBadRequest(msg)
 
+        @fdb.transactional
         def do(tr, patterns):
             out = nstore.FROM(tr, *patterns[0])
             # see nstore.select
@@ -182,10 +183,7 @@ def plot(request):
             msg = 'There is no complete pattern...'
             return HttpResponseBadRequest(msg)
 
-        if all(isinstance(x, var) for x in patterns[0]):
-            msg = 'The first pattern must not be only made of variables!'
-            return HttpResponseBadRequest(msg)
-
+        @fdb.transactional
         def do(tr, patterns):
             out = nstore.FROM(tr, *patterns[0])
             # see nstore.select
@@ -219,6 +217,7 @@ def map(request):
             msg = 'The first pattern must not be only made of variables!'
             return HttpResponseBadRequest(msg)
 
+        @fdb.transactional
         def do(tr, patterns):
             out = nstore.FROM(tr, *patterns[0])
             # see nstore.select
@@ -285,14 +284,14 @@ def change(request, changeid):
     change = get_object_or_404(ChangeRequest, changeid=changeid)
     comments = change.comment_set.all().order_by('created_at')
 
-    # fetch changes
+    @fdb.transactional
     def fetch(tr, changeid):
         # TODO: move the vnstore
         out = vnstore._tuples.FROM(
             tr,
             var('uid'), var('key'), var('value'), var('alive'), changeid
         )
-        out = list(take(out, 1000))
+        out = list(take(out, 100))
         return out
 
     changes = fetch(db, changeid)
@@ -353,6 +352,7 @@ def change_add(request, changeid):
                     value = False
                 elif value.lower() == 'true':
                     value = True
+
         # value is something interesting
         assert isinstance(value, (UUID, int, bool, str))
 
@@ -494,6 +494,7 @@ def change_apply(request, changeid):
     if change.status == ChangeRequest.STATUS_APPLIED:
         return HttpResponseBadRequest('Change already applied!')
 
+    @fdb.transactional
     def apply(tr, change, changeid):
         # apply change to vnstore
         vnstore.change_apply(tr, changeid)
