@@ -146,10 +146,6 @@ def query(request):
             msg = 'There is no complete pattern...'
             return HttpResponseBadRequest(msg)
 
-        if all(isinstance(x, var) for x in patterns[0]):
-            msg = 'The first pattern must not be only made of variables!'
-            return HttpResponseBadRequest(msg)
-
         @fdb.transactional
         def do(tr, patterns):
             out = nstore.FROM(tr, *patterns[0])
