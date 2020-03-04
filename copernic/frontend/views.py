@@ -78,6 +78,24 @@ def index(request):
 def about(request):
     return render(request, 'about.html')
 
+def guess(value):
+    value = value.strip()
+    if not value:
+        raise ValueError()
+    # Try to guess the Python object
+    try:
+        value = UUID(hex=value)
+    except ValueError:
+        try:
+            value = int(value)
+        except ValueError:
+            if value.lower() == 'false':
+                value = False
+            elif value.lower() == 'true':
+                value = True
+            else:
+                # just a string
+                value = value
 
 def make_query(params):
     # make query for the win ;-)
@@ -105,20 +123,7 @@ def make_query(params):
                     # skip that pattern row
                     break
 
-                # Try to guess the Python object
-                try:
-                    value = UUID(hex=value)
-                except ValueError:
-                    try:
-                        value = int(value)
-                    except ValueError:
-                        if value.lower() == 'false':
-                            value = False
-                        elif value.lower() == 'true':
-                            value = True
-                        else:
-                            # just a string
-                            value = value
+                value = guess(value)
                 pattern.append(value)
         else:
             patterns.append(pattern)
@@ -320,37 +325,19 @@ def change_add(request, changeid):
     if request.method == 'POST':
         # get or create unique identifier
         uid = request.POST.get('uid', '')
-        uid = uid.strip()
-        if uid:
-            try:
-                uid = UUID(hex=uid)
-            except ValueError as exc:
-                return HttpResponseBadRequest()
-        else:
+        try:
+            uid = guess(uid)
+        except ValueError:
             uid = uuid4()
-        # get keys TODO: validate kebab-case with a regex
         key = request.POST['key']
-        key = key.strip()
-        if not key:
+        if key.isspace():
             return HttpResponseBadRequest()
+        key = guess(key)
         # get value, try to detect the type
         value = request.POST['value']
-        value = value.strip()
-        if not value:
+        if value.isspace():
             return HttpResponseBadRequest()
-        try:
-            value = UUID(hex=value)
-        except ValueError:
-            try:
-                value = int(value)
-            except ValueError:
-                if value.lower() == 'false':
-                    value = False
-                elif value.lower() == 'true':
-                    value = True
-
-        # value is something interesting
-        assert isinstance(value, (UUID, int, bool, str))
+        value = guess(value)
 
         @fdb.transactional
         def add(tr, uid, key, value):
@@ -372,38 +359,19 @@ def change_delete(request, changeid):
     if request.method == 'POST':
         # get or create unique identifier
         uid = request.POST.get('uid', '')
-        uid = uid.strip()
-        if uid:
-            try:
-                uid = UUID(hex=uid)
-            except ValueError as exc:
-                return HttpResponseBadRequest()
-        else:
-            uid = uuid4()
-        # get keys TODO: validate kebab-case with a regex
-        key = request.POST['key']
-        key = key.strip()
-        if not key:
+        if uid.isspace():
             return HttpResponseBadRequest()
-        key = key.lower()
+        uid = guess(uid)
+        key = request.POST['key']
+        if key.isspace():
+            return HttpResponseBadRequest()
+        key = guess(key)
 
         # get value, try to detect the type
         value = request.POST['value']
-        value = value.strip()
-        if not value:
+        if value.isspace():
             return HttpResponseBadRequest()
-        try:
-            value = UUID(hex=value)
-        except ValueError:
-            try:
-                value = int(value)
-            except ValueError:
-                if value.lower() == 'false':
-                    value = False
-                elif value.lower() == 'true':
-                    value = True
-        # value is something interesting
-        assert isinstance(value, (UUID, int, bool, str))
+        value = guess(value)
 
         @fdb.transactional
         def delete(tr, uid, key, value):
@@ -444,28 +412,9 @@ def change_import(request, changeid):
                 if not uid:
                     return HttpResponseBadRequest('uid is required')
 
-                try:
-                    uid = UUID(hex=uid)
-                except ValueError as exc:
-                    return HttpResponseBadRequest('not a uuid: {}'.format(uid))
-
-                key = key.strip().lower()
-                if not key:
-                    return HttpResponseBadRequest('wrong key: {}'.format(key))
-
-                if not value:
-                    return HttpResponseBadRequest()
-                if isinstance(value, str):
-                    try:
-                        value = UUID(hex=value)
-                    except ValueError:
-                        if value.lower() == 'false':
-                            value = False
-                        elif value.lower() == 'true':
-                            value = True
-
-                # value is something interesting
-                assert isinstance(value, (UUID, int, bool, str))
+                uid = guess(uid)
+                key = guess(key)
+                value = guess(value)
 
                 vnstore.change_continue(tr, changeid)
 
