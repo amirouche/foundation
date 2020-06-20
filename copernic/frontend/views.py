@@ -159,7 +159,8 @@ def query(request):
     )
 
     if request.GET.get('json', False):
-        return JsonResponse(contexte)
+        contexte["bindings"] = [dict(x) for x in bindings]
+        return JsonResponse(context)
     else:
         return render(request, 'query.html', context)
 
