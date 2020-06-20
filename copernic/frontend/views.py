@@ -386,7 +386,7 @@ def change_import(request, changeid):
         def save(tr, changeid, line):
             line = line.strip().decode('utf-8')
             if not line:
-                continue
+                return
             triple = json.loads(line)
 
             if (not isinstance(triple, list)) and len(triple) != 3:
