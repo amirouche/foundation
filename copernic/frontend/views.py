@@ -26,6 +26,7 @@ from django.http import HttpResponseForbidden
 from django.http import HttpResponseNotFound
 from django.template.defaulttags import register
 from django.utils.html import format_html
+from django.http import JsonResponse
 
 import fdb
 
@@ -156,7 +157,11 @@ def query(request):
         bindings=bindings,
         patterns=request.GET,
     )
-    return render(request, 'query.html', context)
+
+    if request.GET.get('json', False):
+        return JsonResponse(contexte)
+    else:
+        return render(request, 'query.html', context)
 
 
 def plot(request):
