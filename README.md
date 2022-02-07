@@ -1,76 +1,69 @@
-# [copernic](https://github.com/amirouche/copernic): awesome data store
+# [foundation](https://github.com/amirouche/foundation)
 
 **alpha**
 
-![data](https://raw.githubusercontent.com/amirouche/copernic/master/data.jpg)
+![data](https://github.com/amirouche/copernic/raw/main/data.jpg)
 
 ## Abstract
 
-copernic is web application that is (mostly) implemented with Python
-programming language.  It is supported by a database that is a triple
-store versioned.  It is possible to do time traveling queries at any
-point in history while still being efficient to query and modify the
-latest version.  The versioned triple store is implemented using a novel
-approach dubbed generic tuple store.  copernic goal is to demonstrate
-that versioned databases allow to implement workflows that ease
-cooperation.
+foundation is a programming system (mostly) implemented with Seed.
 
-## Keywords
+It is supported by a data store that keeps track of everything 
+that can be understood. It is possible to time travel through 
+at any point in history. Meanwhile it is still efficient to query
+and modify the present.  
 
-- data management system
-- data science
-- knowledge base
-- open data
-- python programming language
-- quality assurance
-- reproducible science
-- version control system
+The data, and its history is stored in Foundation.
 
-## Introduction
+foundation demonstrate that versioned knowledge allow to implement workflows
+that ease cooperation.
+
+## De suite
+
+Follow the hip cli hop dance:
+
+```sh
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+./manage.sh migrate
+./manage.sh createsuperuser
+./manage.sh runserver
+```
+
+## Prelude
 
 Versioning in production systems is a trick everybody knows about
-whether it is through backup, logging systems and ad-hoc [audit
-trails](https://code.djangoproject.com/wiki/AuditTrail).  It allows to
+whether it is through backup, logging systems and ad-hoc audit
+trail, in other words tracebility wins (wait for the debbuger (read how to debug programs by Dybvig!)!).
+
+It allows to
 inspect, debug and in worst cases rollback to previous states. There
 is not need to explain the great importance of versioning in software
-management as tools like git, mercurial, and fossil have shaped modern
-computing.
+as tools like fossil have shaped the anthroposcene.
 
-Having the power of versioning open the door to manyfold applications.
-Like, it allows to implement a mechanic similar to github's pull
-requests and gitlab's merge requests in many products.  That very
-mechanic is explicit about the actual human workflow in entreprise
-settings, in particular, when a person validates a change made by
-another person.
+Having the power of History kick the beat to manyfolds.
+
+Like, it allows to implement a mechanic similar to  pull
+requests and change requests in many products.  That very
+mechanic is explicit about actual people settings, in particular, 
+when a person reply, and cheers to a change made by another person.
 
 The *versioned triple store* make the implementation of such mechanics
 more systematic and less error prone as the implementation can be
-shared across various tools and organisations.
+shared across various tools and communities.
 
-copernic takes the path of versioning data and apply the
-change-request mechanic to collaborate around the making of a
-knowledge base, similar in spirit to
-[WikiData](https://wikidata.org/) and inspired from existing data
-management systems like CKAN.
+foundation takes the path of versioning data and apply the
+change-request mechanic to collaborate around the making of thruth.
 
-The use of a version control system to store [open
-data](https://en.wikipedia.org/wiki/Open_data) is a good thing as it
-draws a clear path for reproducible science.  But none, meets all the
-expectations. **copernic aims to replace the use of git and make
-practical cooperation around the creation, publication, storage,
-re-use and maintenance of knowledge bases that are possibly bigger
-than memory.** Resource Description Framework (RDF) offers a good
-canvas for cooperation around open data but there is no solution that
-is good enough according to [Collaborative Open Data versioning: a
-pragmatic approach using Linked Data, by Canova *et
-al.*](https://core.ac.uk/download/pdf/76527782.pdf)
+**foundation aims to make practical cooperation around the creation, 
+publication, storage, re-use and maintenance of knowledge that is biggerthan
+any ones memory.** 
 
-copernic use a novel approach to store triples in an [ordered key-value
-store](https://en.wikipedia.org/wiki/Ordered_Key-Value_Store). It use
-[FoundationDB database storage engine](https://www.foundationdb.org/)
-to deliver a pragmatic versatile ACID-compliant versioned triple store
+Foundation is stored in 
+[FoundationDB](https://www.foundationdb.org/)
+to deliver, with opt-in, a pragmatic versatile ACID-compliant versioned triple store, 
 where people can cooperate around the making of knowledge.  copernic
-only stores changes between versions.  It has also a snapshot of the
-latest version.  copernic does not rely on the theory of patches
-introduced by Darcs but re-use some its vocabulary.  copernic is the
-future.
+only stores changes.
+
+copernic is the future.
