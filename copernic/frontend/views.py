@@ -117,8 +117,12 @@ def make_query(params):
 
 def take(iterator, count):
     for _ in range(count):
-        out = next(iterator)
-        yield out
+        try:
+            out = next(iterator)
+        except StopIteration:
+            pass
+        else:
+            yield out
 
 
 def drop(iterator, count):
