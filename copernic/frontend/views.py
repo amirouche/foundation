@@ -443,9 +443,7 @@ def change_import(request, changeid):
 def change_apply(request, changeid):
     if request.method != 'POST':
         return HttpResponseBadRequest()
-    if not request.user.is_superuser:
-        return HttpResponseForbidden('Only superuser can apply changes!')
-
+    
     changeid = UUID(hex=changeid)
     change = get_object_or_404(ChangeRequest, changeid=changeid)
 
