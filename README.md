@@ -2,7 +2,7 @@
 
 **alpha**
 
-![data](https://github.com/amirouche/copernic/raw/main/data.jpg)
+![data](https://github.com/amirouche/foundation/raw/main/data.jpg)
 
 ## Abstract
 
@@ -63,7 +63,6 @@ any ones memory.**
 Foundation is stored in 
 [FoundationDB](https://www.foundationdb.org/)
 to deliver, with opt-in, a pragmatic versatile ACID-compliant versioned triple store, 
-where people can cooperate around the making of knowledge.  copernic
-only stores changes.
+where people can cooperate around the making of knowledge. 
 
-copernic is the future.
+foundation is the future.
