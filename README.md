@@ -32,12 +32,12 @@ pip install -r requirements.txt
 ./manage.sh runserver
 ```
 
-## Prelude
+## Foundation
 
 Versioning in production systems is a trick everybody knows about
-whether it is through backup, logging systems and ad-hoc audit trail,
-in other words tracebility wins (wait for the debbuger (read how to
-debug programs by Dybvig!)!).
+whether it is through backup, doublpe, and triple backups, logging
+systems, bank and ad-hoc audit trail, in other words tracebility wins
+(wait for the debbuger (read how to debug programs by Dybvig!)!).
 
 It allows to inspect, debug and in worst cases rollback to previous
 states. There is no need to explain the great importance of history in
@@ -51,17 +51,17 @@ requests and change requests in many products.  That very
 mechanic is explicit about actual people, in particular, 
 when we reply, and cheers a change made by another.
 
-*versioned structured knowledge* make the implementation of such mechanics
-more systematic and less error prone as the implementation can be
-shared across various tools and communities.
+*versioned structured knowledge* make the implementation of such
+mechanics more systematic and less error prone as the implementation
+can be shared across various tools and communities.
 
-foundation takes the path of versioning data (or things, or people)
-and apply the change-request mechanic to collaborate around the making
-of knowledge.
+foundation takes the path of versioning data (or things, or ghosts,
+(or people)) and apply the change-request mechanic to collaborate
+around our making.
 
-**foundation aims to make practical cooperation around the creation, 
-publication, storage, re-use and sustainability of knowledge that is bigger 
-than any known memory.** 
+**foundation aims to make practical cooperation around the creation,
+publication, storage, re-use and sustainability of knowledge that is
+bigger than any known human memory.**
 
 **Tech**: Foundation is stored in
 [FoundationDB](https://www.foundationdb.org/) to deliver, with opt-in,
@@ -70,4 +70,4 @@ people can cooperate around the making of knowledge.
 
 --
 
-a random Foundation engineer. 
+a Foundation engineer. 
