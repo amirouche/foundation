@@ -65,12 +65,9 @@
     <button type="submit" class="btn btn-primary mb-2">Submit</button>
 </form>
 
-{% if superuser %}
-<h2>Superuser actions</h2>
 <form method="POST" action="/change/{{ change.changeid }}/apply/">
     {% csrf_token %}
     <button type="submit" class="btn btn-primary mb-2">Apply changes</button>
 </form>
-{% endif %}
 
 {% endblock %}
